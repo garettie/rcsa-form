@@ -60,12 +60,36 @@ export default function App() {
   const [checkingAuth, setCheckingAuth] = useState(true);
   const PAGE_SIZE = 10;
 
+  // Auth check effect
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setAuthenticated(!!session);
       setCheckingAuth(false);
     });
   }, []);
+
+  // Load data when department changes
+  useEffect(() => {
+    if (!authenticated || checkingAuth) return;
+    if (department) {
+      localStorage.setItem("rcsa_department", department);
+      loadData();
+    } else {
+      setLoading(false);
+    }
+  }, [department, authenticated, checkingAuth]);
+
+  // Recalculate scores
+  useEffect(() => {
+    const inherent = form.likelihood_score * form.impact_score;
+    const controls = form.control_design_score * form.control_implementation_score;
+    const inherentLevel = getRiskLevel(inherent);
+    const controlsLevel = getRiskLevel(controls);
+    const residual = inherentLevel * controlsLevel;
+    if (form.inherent_risk_score !== inherent || form.controls_rating !== controls || form.residual_risk_score !== residual) {
+      setForm(f => ({ ...f, inherent_risk_score: inherent, controls_rating: controls, residual_risk_score: residual }));
+    }
+  }, [form.likelihood_score, form.impact_score, form.control_design_score, form.control_implementation_score]);
 
   const handleLogin = () => {
     setAuthenticated(true);
@@ -78,6 +102,7 @@ export default function App() {
     setDepartment("");
   };
 
+  // Conditional returns - AFTER all hooks
   if (checkingAuth) {
     return <div className="min-h-screen bg-slate-50 flex items-center justify-center">Loading...</div>;
   }
@@ -85,27 +110,6 @@ export default function App() {
   if (!authenticated) {
     return <Login onLogin={handleLogin} />;
   }
-
-  useEffect(() => {
-    if (department) {
-      localStorage.setItem("rcsa_department", department);
-      loadData();
-    } else {
-      setLoading(false);
-    }
-  }, [department]);
-
-  // Recalculate scores whenever dependencies change
-  useEffect(() => {
-    const inherent = form.likelihood_score * form.impact_score;
-    const controls = form.control_design_score * form.control_implementation_score;
-    const inherentLevel = getRiskLevel(inherent);
-    const controlsLevel = getRiskLevel(controls);
-    const residual = inherentLevel * controlsLevel;
-    if (form.inherent_risk_score !== inherent || form.controls_rating !== controls || form.residual_risk_score !== residual) {
-      setForm(f => ({ ...f, inherent_risk_score: inherent, controls_rating: controls, residual_risk_score: residual }));
-    }
-  }, [form.likelihood_score, form.impact_score, form.control_design_score, form.control_implementation_score]);
 
   async function loadData() {
     setLoading(true);
