@@ -27,3 +27,22 @@ dist-ssr
 .env
 .env.local
 .env.*.local
+
+# AI / Agent files
+AGENTS.md
+CLAUDE.md
+GEMINI.md
+*.claude*
+*.aider*
+*.windsurf*
+*.cursor*
+
+# OS generated files
+Thumbs.db
+*.tmp
+*.temp
+
+# Backup files
+*.backup
+*.bak
+rcsa-data-entry.backup.html

@@ -234,7 +234,6 @@ export default function App() {
       <div className="header">
         <div>
           <h1 className="header-title">
-            <img src="/LOGOEDITED.png" alt="Logo" style={{ height: '40px', marginRight: '12px', verticalAlign: 'middle' }} />
             Agribank RCSA
           </h1>
         </div>
