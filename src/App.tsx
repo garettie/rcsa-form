@@ -65,6 +65,10 @@ export default function App() {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setAuthenticated(!!session);
       setCheckingAuth(false);
+      if (!session) {
+        setDepartment("");
+        localStorage.removeItem("rcsa_department");
+      }
     });
   }, []);
 
@@ -75,6 +79,7 @@ export default function App() {
       localStorage.setItem("rcsa_department", department);
       loadData();
     } else {
+      setShowModal(true);
       setLoading(false);
     }
   }, [department, authenticated, checkingAuth]);
@@ -248,7 +253,7 @@ export default function App() {
             {department}
             <button onClick={() => setShowModal(true)} title="Change department" aria-label="Change department" dangerouslySetInnerHTML={{__html: ICONS.x}}></button>
           </div>
-          <button className="btn btn-secondary" onClick={handleLogout} style={{ padding: '6px 12px', fontSize: '13px' }}>Logout</button>
+          <button className="btn btn-secondary logout-btn" onClick={handleLogout} dangerouslySetInnerHTML={{__html: ICONS.logout}}></button>
         </div>
       </div>
 

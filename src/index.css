@@ -349,6 +349,16 @@
         background: #e2e8f0;
       }
 
+      .logout-btn {
+        padding: 6px 10px;
+        border-radius: 8px;
+      }
+
+      .logout-btn:hover {
+        background: #fee2e2;
+        color: #dc2626;
+      }
+
       .btn-modal {
         width: 100%;
         justify-content: center;
