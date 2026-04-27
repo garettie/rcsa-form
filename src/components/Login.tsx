@@ -28,7 +28,7 @@ export default function Login({ onLogin }: { onLogin: () => void }) {
     return (
         <div className="login-overlay">
             <div className="login-card">
-                <h2>ORMSM Login</h2>
+                <h2>RCSA Form Login</h2>
 
                 {error && <div className="error-banner">{error}</div>}
 
