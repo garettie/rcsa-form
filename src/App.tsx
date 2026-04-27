@@ -251,9 +251,9 @@ export default function App() {
                     <button className="flex items-center gap-2 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-2 text-sm font-medium text-emerald-700 transition-colors hover:bg-emerald-100" onClick={() => setShowRef(true)}><Book size={16} /> Reference Guide</button>
                     <div className="flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-600">
                         {department}
-                        <button className="ml-1 flex items-center text-slate-400 hover:text-slate-600" onClick={() => setShowModal(true)} title="Change department" aria-label="Change department" dangerouslySetInnerHTML={{ __html: ICONS.x }}></button>
+                        <button className="ml-1 flex items-center text-slate-400 hover:text-slate-600" onClick={() => setShowModal(true)} title="Change department" aria-label="Change department"><ICONS.x size={16} /></button>
                     </div>
-                    <button className="flex items-center rounded-lg border border-slate-200 bg-white p-2 text-slate-400 hover:bg-red-50 hover:text-red-600 hover:border-red-100 transition-all" onClick={handleLogout} dangerouslySetInnerHTML={{ __html: ICONS.logout }} title="Logout"></button>
+                    <button className="flex items-center rounded-lg border border-slate-200 bg-white p-2 text-slate-400 hover:bg-red-50 hover:text-red-600 hover:border-red-100 transition-all" onClick={handleLogout} title="Logout"><ICONS.logout size={16} /></button>
                 </div>
             </div>
 
@@ -261,7 +261,7 @@ export default function App() {
             <div className="mb-10 rounded-2xl border border-slate-200 bg-white p-10 shadow-sm">
                 <div className="mb-10 flex items-center justify-between border-b border-slate-100 pb-6">
                     <h2 className="m-0 text-xl font-bold text-slate-800">{editingId ? "Edit Risk Entry" : "New Risk Entry"}</h2>
-                    {editingId && <button className="flex items-center gap-2 rounded-lg bg-slate-100 px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-200 transition-all" onClick={() => { setEditingId(null); setForm(getEmptyForm()); }} dangerouslySetInnerHTML={{ __html: ICONS.x + ' Cancel' }}></button>}
+                    {editingId && <button className="flex items-center gap-2 rounded-lg bg-slate-100 px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-200 transition-all" onClick={() => { setEditingId(null); setForm(getEmptyForm()); }}><ICONS.x size={16} /> Cancel</button>}
                 </div>
 
                 {error && <div className="mb-8 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700 shadow-sm">{error}</div>}
@@ -287,7 +287,7 @@ export default function App() {
                                         {processes.map(p => <option key={p.id} value={p.id} className="text-slate-700">{p.process_name}</option>)}
                                     </select>
                                 )}
-                                <button id="edit-processes-btn" className="flex items-center gap-2 whitespace-nowrap rounded-md bg-slate-100 px-5 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-200 transition-colors" onClick={() => setShowProcessModal(true)} dangerouslySetInnerHTML={{ __html: ICONS.edit + ' Edit' }}></button>
+                                <button id="edit-processes-btn" className="flex items-center gap-2 whitespace-nowrap rounded-md bg-slate-100 px-5 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-200 transition-colors" onClick={() => setShowProcessModal(true)}><ICONS.edit size={12} /> Edit</button>
                             </div>
                         </div>
 
@@ -417,7 +417,7 @@ export default function App() {
                 </div>
 
                 <div className="mt-8 flex justify-end border-t border-slate-100 pt-8">
-                    <button className="flex items-center gap-2 rounded-md bg-slate-800 px-10 py-3.5 text-sm font-bold text-white shadow-lg shadow-slate-200 hover:bg-slate-700 disabled:opacity-50 transition-all active:scale-95" onClick={handleSaveRisk} disabled={saving} dangerouslySetInnerHTML={{ __html: ICONS.save + (saving ? ' Saving...' : (editingId ? ' Update Entry' : ' Save Entry')) }}></button>
+                    <button className="flex items-center gap-2 rounded-md bg-slate-800 px-10 py-3.5 text-sm font-bold text-white shadow-lg shadow-slate-200 hover:bg-slate-700 disabled:opacity-50 transition-all active:scale-95" onClick={handleSaveRisk} disabled={saving}><ICONS.save size={16} /> {saving ? ' Saving...' : (editingId ? ' Update Entry' : ' Save Entry')}</button>
                 </div>
             </div>
 
@@ -459,8 +459,8 @@ export default function App() {
                                             </td>
                                             <td className="text-right">
                                                 <div className="flex justify-end gap-1">
-                                                    <button className="flex h-8 w-8 items-center justify-center rounded-md text-slate-400 hover:bg-indigo-50 hover:text-indigo-600 transition-colors" onClick={() => handleEditRisk(r)} dangerouslySetInnerHTML={{ __html: ICONS.edit }}></button>
-                                                    <button className="flex h-8 w-8 items-center justify-center rounded-md text-slate-400 hover:bg-rose-50 hover:text-rose-600 transition-colors" onClick={() => handleDeleteRisk(r.id)} dangerouslySetInnerHTML={{ __html: ICONS.trash }}></button>
+                                                    <button className="flex h-8 w-8 items-center justify-center rounded-md text-slate-400 hover:bg-indigo-50 hover:text-indigo-600 transition-colors" onClick={() => handleEditRisk(r)}><ICONS.edit size={16} /></button>
+                                                    <button className="flex h-8 w-8 items-center justify-center rounded-md text-slate-400 hover:bg-rose-50 hover:text-rose-600 transition-colors" onClick={() => handleDeleteRisk(r.id)}><ICONS.trash size={16} /></button>
                                                 </div>
                                             </td>
                                         </tr>
@@ -501,7 +501,7 @@ export default function App() {
                     <div className="flex max-h-[90vh] w-[90%] max-w-[600px] flex-col rounded-2xl bg-white p-8 shadow-2xl">
                         <div className="mb-6 flex items-center justify-between">
                             <h2 className="m-0 text-xl font-bold text-slate-800">Manage Processes</h2>
-                            <button className="flex h-8 w-8 items-center justify-center rounded-md text-slate-400 hover:bg-slate-100" onClick={() => setShowProcessModal(false)} dangerouslySetInnerHTML={{ __html: ICONS.x }}></button>
+                            <button className="flex h-8 w-8 items-center justify-center rounded-md text-slate-400 hover:bg-slate-100" onClick={() => setShowProcessModal(false)}><ICONS.x size={16} /></button>
                         </div>
                         <div className="mb-6 flex gap-2">
                             <input type="text" id="new-process-name" placeholder="New process name..." />
@@ -517,7 +517,7 @@ export default function App() {
                                         <tr key={p.id} className="hover:bg-slate-50 transition-colors">
                                             <td className="font-medium text-slate-700">{p.process_name}</td>
                                             <td className="w-10 text-right">
-                                                <button className="flex h-8 w-8 items-center justify-center rounded-md text-slate-400 hover:bg-rose-50 hover:text-rose-600 transition-colors" onClick={() => handleDeleteProcess(p.id)} dangerouslySetInnerHTML={{ __html: ICONS.trash }}></button>
+                                                <button className="flex h-8 w-8 items-center justify-center rounded-md text-slate-400 hover:bg-rose-50 hover:text-rose-600 transition-colors" onClick={() => handleDeleteProcess(p.id)}><ICONS.trash size={16} /></button>
                                             </td>
                                         </tr>
                                     ))}
