@@ -28,11 +28,11 @@ export default function Login({ onLogin }: { onLogin: () => void }) {
     return (
         <div className="login-overlay">
             <div className="login-card">
-                <h2>RCSA Login</h2>
+                <h2>ORMSM Login</h2>
 
                 {error && <div className="error-banner">{error}</div>}
 
-                <form onSubmit={handleLogin}>
+                <form onSubmit={handleLogin} className="space-y-6">
                     <div className="form-group">
                         <label>Email</label>
                         <input
@@ -55,7 +55,7 @@ export default function Login({ onLogin }: { onLogin: () => void }) {
                         />
                     </div>
 
-                    <button type="submit" disabled={loading} className="btn btn-primary login-btn">
+                    <button type="submit" disabled={loading} className="btn-primary">
                         {loading ? 'Authenticating...' : 'Sign In'}
                     </button>
                 </form>

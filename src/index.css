@@ -11,7 +11,9 @@
   }
 
   input[type="text"], 
-  input[type="date"], 
+  input[type="date"],
+  input[type="email"],
+  input[type="password"], 
   select, 
   textarea {
     @apply w-full rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-sm outline-none transition-all;
@@ -80,4 +82,36 @@ th {
 
 td {
   @apply p-3 border-b border-slate-100 align-middle;
+}
+
+.login-overlay {
+  @apply min-h-screen bg-slate-50 flex items-center justify-center p-4;
+}
+
+.login-card {
+  @apply max-w-md w-full bg-white rounded-xl shadow-lg p-8;
+}
+
+.login-card h2 {
+  @apply text-2xl font-bold text-center text-slate-800 mb-8;
+}
+
+.error-banner {
+  @apply bg-red-50 border border-red-200 text-red-700 rounded-lg p-3 mb-6 text-sm;
+}
+
+.form-group {
+  @apply space-y-2;
+}
+
+.form-group label {
+  @apply block text-sm font-medium text-slate-700;
+}
+
+.btn-primary {
+  @apply w-full bg-slate-900 text-white py-2 px-4 rounded-lg hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:ring-offset-2 transition-all disabled:opacity-50 font-medium;
+}
+
+.login-btn {
+  @apply mt-2;
 }
