@@ -238,169 +238,169 @@ export default function App() {
     if (loading) return <div className="loading-center"><div className="spinner"></div></div>;
 
     return (
-        <div className="container">
+        <div className="mx-auto max-w-7xl p-6">
             {/* Header */}
-            <div className="header">
+            <div className="mb-8 flex items-center justify-between">
                 <div>
-                    <h1 className="header-title">
+                    <h1 className="text-2xl font-bold text-slate-800">
                         Risk and Control Self-Assessment
                     </h1>
                 </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <button className="tutorial-btn" onClick={() => setShowTutorial(true)}><HelpCircle size={16} /> How to Use</button>
-                    <button className="ref-btn" onClick={() => setShowRef(true)}><Book size={16} /> Reference Guide</button>
-                    <div className="dept-badge">
+                <div className="flex items-center gap-3">
+                    <button className="flex items-center gap-2 rounded-lg border border-blue-200 bg-blue-50 px-4 py-2 text-sm font-medium text-blue-700 transition-colors hover:bg-blue-100" onClick={() => setShowTutorial(true)}><HelpCircle size={16} /> How to Use</button>
+                    <button className="flex items-center gap-2 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-2 text-sm font-medium text-emerald-700 transition-colors hover:bg-emerald-100" onClick={() => setShowRef(true)}><Book size={16} /> Reference Guide</button>
+                    <div className="flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-600">
                         {department}
-                        <button onClick={() => setShowModal(true)} title="Change department" aria-label="Change department" dangerouslySetInnerHTML={{ __html: ICONS.x }}></button>
+                        <button className="ml-1 flex items-center text-slate-400 hover:text-slate-600" onClick={() => setShowModal(true)} title="Change department" aria-label="Change department" dangerouslySetInnerHTML={{ __html: ICONS.x }}></button>
                     </div>
-                    <button className="btn btn-secondary logout-btn" onClick={handleLogout} dangerouslySetInnerHTML={{ __html: ICONS.logout }}></button>
+                    <button className="flex items-center rounded-lg border border-slate-200 bg-white p-2 text-slate-400 hover:bg-red-50 hover:text-red-600 hover:border-red-100 transition-all" onClick={handleLogout} dangerouslySetInnerHTML={{ __html: ICONS.logout }} title="Logout"></button>
                 </div>
             </div>
 
             {/* Form */}
-            <div className="card">
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
-                    <h2 className="card-title" style={{ marginBottom: 0 }}>{editingId ? "Edit Risk Entry" : "New Risk Entry"}</h2>
-                    {editingId && <button className="btn btn-secondary" onClick={() => { setEditingId(null); setForm(getEmptyForm()); }} style={{ padding: '6px 12px', fontSize: '13px' }} dangerouslySetInnerHTML={{ __html: ICONS.x + ' Cancel' }}></button>}
+            <div className="mb-10 rounded-2xl border border-slate-200 bg-white p-10 shadow-sm">
+                <div className="mb-8 flex items-center justify-between">
+                    <h2 className="m-0 text-lg font-bold text-slate-800">{editingId ? "Edit Risk Entry" : "New Risk Entry"}</h2>
+                    {editingId && <button className="flex items-center gap-2 rounded-lg bg-slate-100 px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-200" onClick={() => { setEditingId(null); setForm(getEmptyForm()); }} dangerouslySetInnerHTML={{ __html: ICONS.x + ' Cancel' }}></button>}
                 </div>
 
-                {error && <div className="error-banner">{error}</div>}
+                {error && <div className="mb-6 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700">{error}</div>}
 
-                <div className="form-grid">
+                <div className="grid grid-cols-1 gap-x-10 gap-y-8 md:grid-cols-3">
                     <div>
                         <label>Assessment Period</label>
-                        <input id="f-assessment_period" type="text" value={form.assessment_period} onChange={e => { updateForm('assessment_period', e.target.value); setErrorField(null); }} placeholder="e.g. Q1 2025" style={errorField === 'f-assessment_period' ? { borderColor: '#ef4444', borderWidth: '2px' } : {}} />
+                        <input id="f-assessment_period" type="text" value={form.assessment_period} onChange={e => { updateForm('assessment_period', e.target.value); setErrorField(null); }} placeholder="e.g. Q1 2025" className={errorField === 'f-assessment_period' ? 'border-red-500 ring-2 ring-red-100' : ''} />
                     </div>
-                    <div className="span-2">
+                    <div className="md:col-span-2">
                         <label>Process *</label>
-                        <div className="process-field-wrap">
+                        <div className="flex gap-3">
                             {processes.length === 0 ? (
-                                <span className="process-empty-msg">No processes yet. Add one using Edit Processes</span>
+                                <div className="flex-1 rounded-lg border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm italic text-slate-400">No processes yet. Add one using Edit Processes</div>
                             ) : (
-                                <select id="f-process_id" value={form.process_id} onChange={e => { updateForm('process_id', e.target.value); setErrorField(null); }} className={!form.process_id ? "select-empty" : ""} style={errorField === 'f-process_id' ? { borderColor: '#ef4444', borderWidth: '2px' } : {}}>
+                                <select id="f-process_id" value={form.process_id} onChange={e => { updateForm('process_id', e.target.value); setErrorField(null); }} className={`select-custom ${!form.process_id ? 'text-slate-400' : ''} ${errorField === 'f-process_id' ? 'border-red-500 ring-2 ring-red-100' : ''}`}>
                                     <option value="" disabled>Select process...</option>
-                                    {processes.map(p => <option key={p.id} value={p.id}>{p.process_name}</option>)}
+                                    {processes.map(p => <option key={p.id} value={p.id} className="text-slate-700">{p.process_name}</option>)}
                                 </select>
                             )}
-                            <button className="btn btn-secondary" onClick={() => setShowProcessModal(true)} style={{ padding: '6px 14px', fontSize: '13px', whiteSpace: 'nowrap' }} dangerouslySetInnerHTML={{ __html: ICONS.edit + ' Edit Processes' }}></button>
+                            <button id="edit-processes-btn" className="flex items-center gap-2 whitespace-nowrap rounded-lg bg-slate-100 px-5 py-2 text-sm font-medium text-slate-600 hover:bg-slate-200 transition-colors" onClick={() => setShowProcessModal(true)} dangerouslySetInnerHTML={{ __html: ICONS.edit + ' Edit' }}></button>
                         </div>
                     </div>
 
-                    <div className="span-3">
+                    <div className="md:col-span-3">
                         <label>Risk Description *</label>
-                        <textarea id="f-risk_description" rows={2} value={form.risk_description} onChange={e => { updateForm('risk_description', e.target.value); setErrorField(null); }} placeholder="Describe the risk..." required style={errorField === 'f-risk_description' ? { borderColor: '#ef4444', borderWidth: '2px' } : {}}></textarea>
+                        <textarea id="f-risk_description" rows={3} value={form.risk_description} onChange={e => { updateForm('risk_description', e.target.value); setErrorField(null); }} placeholder="Describe the risk..." required className={errorField === 'f-risk_description' ? 'border-red-500 ring-2 ring-red-100' : ''}></textarea>
                     </div>
 
-                    <div className="span-3">
+                    <div className="md:col-span-3">
                         <label>Possible Causes</label>
-                        <textarea id="f-possible_causes" rows={2} value={form.possible_causes} onChange={e => { updateForm('possible_causes', e.target.value); setErrorField(null); }} placeholder="Describe possible causes..." style={errorField === 'f-possible_causes' ? { borderColor: '#ef4444', borderWidth: '2px' } : {}}></textarea>
+                        <textarea id="f-possible_causes" rows={3} value={form.possible_causes} onChange={e => { updateForm('possible_causes', e.target.value); setErrorField(null); }} placeholder="Describe possible causes..." className={errorField === 'f-possible_causes' ? 'border-red-500 ring-2 ring-red-100' : ''}></textarea>
                     </div>
 
                     <div>
                         <label>Root Cause</label>
-                        <select id="f-root_cause" value={form.root_cause} onChange={e => { updateForm('root_cause', e.target.value); setErrorField(null); }} style={errorField === 'f-root_cause' ? { borderColor: '#ef4444', borderWidth: '2px' } : {}}>
+                        <select id="f-root_cause" value={form.root_cause} onChange={e => { updateForm('root_cause', e.target.value); setErrorField(null); }} className={`select-custom ${errorField === 'f-root_cause' ? 'border-red-500 ring-2 ring-red-100' : ''}`}>
                             {ROOT_CAUSES.map(rc => <option key={rc} value={rc}>{rc}</option>)}
                         </select>
                     </div>
-                    <div className="span-2">
+                    <div className="md:col-span-2">
                         <label>Event Type</label>
-                        <select id="f-event_type" value={form.event_type} onChange={e => { updateForm('event_type', e.target.value); setErrorField(null); }} style={errorField === 'f-event_type' ? { borderColor: '#ef4444', borderWidth: '2px' } : {}}>
+                        <select id="f-event_type" value={form.event_type} onChange={e => { updateForm('event_type', e.target.value); setErrorField(null); }} className={`select-custom ${errorField === 'f-event_type' ? 'border-red-500 ring-2 ring-red-100' : ''}`}>
                             {EVENT_TYPES.map(et => <option key={et} value={et}>{et}</option>)}
                         </select>
                     </div>
 
                     <div>
                         <label>Likelihood Score</label>
-                        <select id="f-likelihood_score" value={form.likelihood_score} onChange={e => updateForm('likelihood_score', Number(e.target.value))}>
+                        <select id="f-likelihood_score" value={form.likelihood_score} onChange={e => updateForm('likelihood_score', Number(e.target.value))} className="select-custom">
                             {[1, 2, 3, 4].map(n => <option key={n} value={n}>{n} - {LIKELIHOOD_LABELS[n as keyof typeof LIKELIHOOD_LABELS]}</option>)}
                         </select>
                     </div>
                     <div>
                         <label>Impact Score</label>
-                        <select id="f-impact_score" value={form.impact_score} onChange={e => updateForm('impact_score', Number(e.target.value))}>
+                        <select id="f-impact_score" value={form.impact_score} onChange={e => updateForm('impact_score', Number(e.target.value))} className="select-custom">
                             {[1, 2, 3, 4].map(n => <option key={n} value={n}>{n} - {IMPACT_LABELS[n as keyof typeof IMPACT_LABELS]}</option>)}
                         </select>
                     </div>
                     <div>
                         <label>Inherent Risk Score</label>
-                        <div className="computed-field">
-                            <span className="computed-score" style={{ color: RISK_COLORS[inherentLevel as keyof typeof RISK_COLORS] }}>{form.inherent_risk_score}</span>
-                            <span className="risk-badge" style={{ background: `${RISK_COLORS[inherentLevel as keyof typeof RISK_COLORS]}18`, color: RISK_COLORS[inherentLevel as keyof typeof RISK_COLORS] }}>{RESIDUAL_RISK_LABELS[inherentLevel as keyof typeof RESIDUAL_RISK_LABELS]}</span>
+                        <div id="cf-inherent-score" className="flex min-h-[46px] items-center gap-3 rounded-lg border border-slate-200 bg-slate-50 px-4 py-2.5">
+                            <span className="text-2xl font-bold" style={{ color: RISK_COLORS[inherentLevel as keyof typeof RISK_COLORS] }}>{form.inherent_risk_score}</span>
+                            <span className="rounded px-2 py-0.5 text-[11px] font-semibold" style={{ background: `${RISK_COLORS[inherentLevel as keyof typeof RISK_COLORS]}18`, color: RISK_COLORS[inherentLevel as keyof typeof RISK_COLORS] }}>{RESIDUAL_RISK_LABELS[inherentLevel as keyof typeof RESIDUAL_RISK_LABELS]}</span>
                         </div>
                     </div>
 
-                    <div className="span-3">
+                    <div className="md:col-span-3">
                         <label>Control Description</label>
-                        <textarea id="f-control_description" rows={2} value={form.control_description} onChange={e => { updateForm('control_description', e.target.value); setErrorField(null); }} placeholder="Describe the controls in place..." style={errorField === 'f-control_description' ? { borderColor: '#ef4444', borderWidth: '2px' } : {}}></textarea>
+                        <textarea id="f-control_description" rows={3} value={form.control_description} onChange={e => { updateForm('control_description', e.target.value); setErrorField(null); }} placeholder="Describe the controls in place..." className={errorField === 'f-control_description' ? 'border-red-500 ring-2 ring-red-100' : ''}></textarea>
                     </div>
 
                     <div>
                         <label>Control Type</label>
-                        <select id="f-control_type" value={form.control_type} onChange={e => { updateForm('control_type', e.target.value); setErrorField(null); }} className={!form.control_type ? "select-empty" : ""} style={errorField === 'f-control_type' ? { borderColor: '#ef4444', borderWidth: '2px' } : {}}>
+                        <select id="f-control_type" value={form.control_type} onChange={e => { updateForm('control_type', e.target.value); setErrorField(null); }} className={`select-custom ${!form.control_type ? 'text-slate-400' : ''} ${errorField === 'f-control_type' ? 'border-red-500 ring-2 ring-red-100' : ''}`}>
                             <option value="" disabled>Select Control Type...</option>
-                            {CONTROL_TYPES.map(ct => <option key={ct} value={ct}>{ct}</option>)}
+                            {CONTROL_TYPES.map(ct => <option key={ct} value={ct} className="text-slate-700">{ct}</option>)}
                         </select>
                     </div>
                     <div>
                         <label>Control Design</label>
-                        <select id="f-control_design_score" value={form.control_design_score} onChange={e => updateForm('control_design_score', Number(e.target.value))}>
+                        <select id="f-control_design_score" value={form.control_design_score} onChange={e => updateForm('control_design_score', Number(e.target.value))} className="select-custom">
                             {[1, 2, 3, 4].map(n => <option key={n} value={n}>{n} - {CONTROL_DESIGN_LABELS[n as keyof typeof CONTROL_DESIGN_LABELS]}</option>)}
                         </select>
                     </div>
                     <div>
                         <label>Control Implementation</label>
-                        <select id="f-control_implementation_score" value={form.control_implementation_score} onChange={e => updateForm('control_implementation_score', Number(e.target.value))}>
+                        <select id="f-control_implementation_score" value={form.control_implementation_score} onChange={e => updateForm('control_implementation_score', Number(e.target.value))} className="select-custom">
                             {[1, 2, 3, 4].map(n => <option key={n} value={n}>{n} - {CONTROL_IMPL_LABELS[n as keyof typeof CONTROL_IMPL_LABELS]}</option>)}
                         </select>
                     </div>
 
                     <div>
                         <label>Controls Rating</label>
-                        <div className="computed-field">
-                            <span className="computed-score" style={{ color: RISK_COLORS[controlsLevel as keyof typeof RISK_COLORS] }}>{form.controls_rating}</span>
-                            <span className="risk-badge" style={{ background: `${RISK_COLORS[controlsLevel as keyof typeof RISK_COLORS]}18`, color: RISK_COLORS[controlsLevel as keyof typeof RISK_COLORS] }}>{CONTROLS_RATING_LABELS[controlsLevel as keyof typeof CONTROLS_RATING_LABELS]}</span>
+                        <div id="cf-controls-rating" className="flex min-h-[46px] items-center gap-3 rounded-lg border border-slate-200 bg-slate-50 px-4 py-2.5">
+                            <span className="text-2xl font-bold" style={{ color: RISK_COLORS[controlsLevel as keyof typeof RISK_COLORS] }}>{form.controls_rating}</span>
+                            <span className="rounded px-2 py-0.5 text-[11px] font-semibold" style={{ background: `${RISK_COLORS[controlsLevel as keyof typeof RISK_COLORS]}18`, color: RISK_COLORS[controlsLevel as keyof typeof RISK_COLORS] }}>{CONTROLS_RATING_LABELS[controlsLevel as keyof typeof CONTROLS_RATING_LABELS]}</span>
                         </div>
                     </div>
-                    <div className="span-2">
+                    <div className="md:col-span-2">
                         <label>Residual Risk Score</label>
-                        <div className="computed-field" id="cf-residual">
-                            <span className="computed-score" style={{ color: RISK_COLORS[residualLevel as keyof typeof RISK_COLORS] }}>{form.residual_risk_score}</span>
-                            <span className="risk-badge" style={{ background: `${RISK_COLORS[residualLevel as keyof typeof RISK_COLORS]}18`, color: RISK_COLORS[residualLevel as keyof typeof RISK_COLORS] }}>{RESIDUAL_RISK_LABELS[residualLevel as keyof typeof RESIDUAL_RISK_LABELS]}</span>
+                        <div className="flex min-h-[46px] items-center gap-3 rounded-lg border border-slate-200 bg-slate-50 px-4 py-2.5" id="cf-residual">
+                            <span className="text-2xl font-bold" style={{ color: RISK_COLORS[residualLevel as keyof typeof RISK_COLORS] }}>{form.residual_risk_score}</span>
+                            <span className="rounded px-2 py-0.5 text-[11px] font-semibold" style={{ background: `${RISK_COLORS[residualLevel as keyof typeof RISK_COLORS]}18`, color: RISK_COLORS[residualLevel as keyof typeof RISK_COLORS] }}>{RESIDUAL_RISK_LABELS[residualLevel as keyof typeof RESIDUAL_RISK_LABELS]}</span>
                         </div>
                     </div>
 
                     <div>
                         <label>Risk Treatment</label>
-                        <select id="f-risk_treatment" value={form.risk_treatment} onChange={e => updateForm('risk_treatment', e.target.value)}>
+                        <select id="f-risk_treatment" value={form.risk_treatment} onChange={e => updateForm('risk_treatment', e.target.value)} className="select-custom">
                             {RISK_TREATMENTS.map(rt => <option key={rt} value={rt}>{rt}</option>)}
                         </select>
                     </div>
-                    <div className="span-2">
+                    <div className="md:col-span-2">
                         <label>Action Plan</label>
-                        <input id="f-action_plan" type="text" value={form.action_plan} onChange={e => { updateForm('action_plan', e.target.value); setErrorField(null); }} placeholder="What actions will be taken?" style={errorField === 'f-action_plan' ? { borderColor: '#ef4444', borderWidth: '2px' } : {}} />
+                        <input id="f-action_plan" type="text" value={form.action_plan} onChange={e => { updateForm('action_plan', e.target.value); setErrorField(null); }} placeholder="What actions will be taken?" className={errorField === 'f-action_plan' ? 'border-red-500 ring-2 ring-red-100' : ''} />
                     </div>
 
                     <div>
                         <label>Action Plan Deadline</label>
-                        <input id="f-action_plan_deadline" type="date" value={form.action_plan_deadline} onChange={e => { updateForm('action_plan_deadline', e.target.value); setErrorField(null); }} style={errorField === 'f-action_plan_deadline' ? { borderColor: '#ef4444', borderWidth: '2px' } : {}} />
+                        <input id="f-action_plan_deadline" type="date" value={form.action_plan_deadline} onChange={e => { updateForm('action_plan_deadline', e.target.value); setErrorField(null); }} className={errorField === 'f-action_plan_deadline' ? 'border-red-500 ring-2 ring-red-100' : ''} />
                     </div>
-                    <div className="span-2">
+                    <div className="md:col-span-2">
                         <label>Status</label>
-                        <select value={form.status} onChange={e => updateForm('status', e.target.value)}>
+                        <select id="f-status" value={form.status} onChange={e => updateForm('status', e.target.value)} className="select-custom">
                             {STATUSES.map(s => <option key={s} value={s}>{s}</option>)}
                         </select>
                     </div>
                 </div>
 
-                <div className="form-actions" style={{ marginTop: '24px' }}>
-                    <button className="btn btn-primary" onClick={handleSaveRisk} disabled={saving} dangerouslySetInnerHTML={{ __html: ICONS.save + (saving ? ' Saving...' : (editingId ? ' Update Entry' : ' Save Entry')) }}></button>
+                <div className="mt-10 flex justify-end border-t border-slate-100 pt-8">
+                    <button className="flex items-center gap-2 rounded-lg bg-slate-800 px-8 py-3 text-sm font-bold text-white shadow-lg shadow-slate-200 hover:bg-slate-700 disabled:opacity-50 transition-all active:scale-95" onClick={handleSaveRisk} disabled={saving} dangerouslySetInnerHTML={{ __html: ICONS.save + (saving ? ' Saving...' : (editingId ? ' Update Entry' : ' Save Entry')) }}></button>
                 </div>
             </div>
 
-            {/* Table */}
-            <div className="card">
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-                    <h2 className="card-title" style={{ marginBottom: 0 }}>Logged Risks ({risks.length})</h2>
+            {/* Table Section */}
+            <div className="rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
+                <div className="mb-6 flex items-center justify-between">
+                    <h2 className="m-0 text-lg font-bold text-slate-800">Logged Risks ({risks.length})</h2>
                 </div>
                 <div className="table-responsive">
                     <table className="table">
@@ -410,28 +410,34 @@ export default function App() {
                                 <th>Risk Description</th>
                                 <th>Residual</th>
                                 <th>Status</th>
-                                <th style={{ width: '80px', textAlign: 'right' }}>Actions</th>
+                                <th className="text-right">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                             {risks.length === 0 ? (
-                                <tr><td colSpan={5} className="empty-state">No risks logged yet.</td></tr>
+                                <tr><td colSpan={5} className="p-12 text-center text-slate-400">No risks logged yet.</td></tr>
                             ) : (
                                 risks.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE).map(r => {
                                     const rl = getRiskLevel(r.residual_risk_score);
                                     return (
-                                        <tr key={r.id}>
+                                        <tr key={r.id} className="hover:bg-slate-50 transition-colors">
                                             <td>{r.process_name}</td>
                                             <td>{r.risk_description}</td>
                                             <td>
-                                                <span className="risk-badge" style={{ background: `${RISK_COLORS[rl as keyof typeof RISK_COLORS]}18`, color: RISK_COLORS[rl as keyof typeof RISK_COLORS] }}>
+                                                <span className="rounded px-2 py-0.5 text-[11px] font-semibold" style={{ background: `${RISK_COLORS[rl as keyof typeof RISK_COLORS]}18`, color: RISK_COLORS[rl as keyof typeof RISK_COLORS] }}>
                                                     {r.residual_risk_score} - {RESIDUAL_RISK_LABELS[rl as keyof typeof RESIDUAL_RISK_LABELS]}
                                                 </span>
                                             </td>
-                                            <td>{r.status}</td>
-                                            <td style={{ textAlign: 'right' }}>
-                                                <button className="icon-btn" onClick={() => handleEditRisk(r)} dangerouslySetInnerHTML={{ __html: ICONS.edit }}></button>
-                                                <button className="icon-btn delete-btn" onClick={() => handleDeleteRisk(r.id)} dangerouslySetInnerHTML={{ __html: ICONS.trash }}></button>
+                                            <td>
+                                                <span className={`rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider ${r.status === 'Open' ? 'bg-amber-100 text-amber-700' : r.status === 'Closed' ? 'bg-emerald-100 text-emerald-700' : 'bg-blue-100 text-blue-700'}`}>
+                                                    {r.status}
+                                                </span>
+                                            </td>
+                                            <td className="text-right">
+                                                <div className="flex justify-end gap-1">
+                                                    <button className="flex h-8 w-8 items-center justify-center rounded-md text-slate-400 hover:bg-indigo-50 hover:text-indigo-600 transition-colors" onClick={() => handleEditRisk(r)} dangerouslySetInnerHTML={{ __html: ICONS.edit }}></button>
+                                                    <button className="flex h-8 w-8 items-center justify-center rounded-md text-slate-400 hover:bg-rose-50 hover:text-rose-600 transition-colors" onClick={() => handleDeleteRisk(r.id)} dangerouslySetInnerHTML={{ __html: ICONS.trash }}></button>
+                                                </div>
                                             </td>
                                         </tr>
                                     )
@@ -441,10 +447,10 @@ export default function App() {
                     </table>
                 </div>
                 {risks.length > PAGE_SIZE && (
-                    <div className="pagination">
-                        <button disabled={page === 0} onClick={() => setPage(p => p - 1)}>Prev</button>
-                        <span>Page {page + 1} of {Math.ceil(risks.length / PAGE_SIZE)}</span>
-                        <button disabled={(page + 1) * PAGE_SIZE >= risks.length} onClick={() => setPage(p => p + 1)}>Next</button>
+                    <div className="mt-6 flex items-center justify-between">
+                        <button className="rounded-lg bg-slate-100 px-5 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-200 disabled:opacity-30" disabled={page === 0} onClick={() => setPage(p => p - 1)}>Previous</button>
+                        <span className="text-xs text-slate-400">Page {page + 1} of {Math.ceil(risks.length / PAGE_SIZE)}</span>
+                        <button className="rounded-lg bg-slate-100 px-5 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-200 disabled:opacity-30" disabled={(page + 1) * PAGE_SIZE >= risks.length} onClick={() => setPage(p => p + 1)}>Next</button>
                     </div>
                 )}
             </div>
@@ -453,13 +459,13 @@ export default function App() {
             {showModal && (
                 <div className="modal-overlay">
                     <div className="modal-card">
-                        <h2>Select Department</h2>
-                        <p>Please select your department to continue.</p>
+                        <h2 className="mb-1 text-xl font-bold text-slate-800">Select Department</h2>
+                        <p className="mb-6 text-sm text-slate-500">Please select your department to continue.</p>
                         <select value={department} onChange={e => {
                             setDepartment(e.target.value);
                             setShowModal(false);
-                        }}>
-                            <option value="" disabled>Select...</option>
+                        }} className="select-custom">
+                            <option value="" disabled>Select department...</option>
                             {DEPARTMENTS.map(d => <option key={d} value={d}>{d}</option>)}
                         </select>
                     </div>
@@ -468,30 +474,30 @@ export default function App() {
 
             {showProcessModal && (
                 <div className="modal-overlay">
-                    <div className="modal-card" style={{ maxWidth: '600px' }}>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-                            <h2 style={{ margin: 0 }}>Manage Processes</h2>
-                            <button className="icon-btn" onClick={() => setShowProcessModal(false)} dangerouslySetInnerHTML={{ __html: ICONS.x }}></button>
+                    <div className="flex max-h-[90vh] w-[90%] max-w-[600px] flex-col rounded-2xl bg-white p-8 shadow-2xl">
+                        <div className="mb-6 flex items-center justify-between">
+                            <h2 className="m-0 text-xl font-bold text-slate-800">Manage Processes</h2>
+                            <button className="flex h-8 w-8 items-center justify-center rounded-md text-slate-400 hover:bg-slate-100" onClick={() => setShowProcessModal(false)} dangerouslySetInnerHTML={{ __html: ICONS.x }}></button>
                         </div>
-                        <div style={{ display: 'flex', gap: '8px', marginBottom: '16px' }}>
-                            <input type="text" id="new-process-name" placeholder="New process name..." style={{ flex: 1 }} />
-                            <button className="btn btn-primary" onClick={() => {
+                        <div className="mb-6 flex gap-2">
+                            <input type="text" id="new-process-name" placeholder="New process name..." />
+                            <button className="btn btn-primary whitespace-nowrap px-6" onClick={() => {
                                 const el = document.getElementById('new-process-name') as HTMLInputElement;
                                 if (el.value) { handleAddProcess(el.value); el.value = ''; }
-                            }}>Add</button>
+                            }}>Add Process</button>
                         </div>
-                        <div className="table-responsive" style={{ maxHeight: '400px', overflowY: 'auto' }}>
+                        <div className="table-responsive">
                             <table className="table">
-                                <tbody>
+                                <tbody className="divide-y divide-slate-100">
                                     {processes.map(p => (
-                                        <tr key={p.id}>
-                                            <td>{p.process_name}</td>
-                                            <td style={{ textAlign: 'right', width: '40px' }}>
-                                                <button className="icon-btn delete-btn" onClick={() => handleDeleteProcess(p.id)} dangerouslySetInnerHTML={{ __html: ICONS.trash }}></button>
+                                        <tr key={p.id} className="hover:bg-slate-50 transition-colors">
+                                            <td className="font-medium text-slate-700">{p.process_name}</td>
+                                            <td className="w-10 text-right">
+                                                <button className="flex h-8 w-8 items-center justify-center rounded-md text-slate-400 hover:bg-rose-50 hover:text-rose-600 transition-colors" onClick={() => handleDeleteProcess(p.id)} dangerouslySetInnerHTML={{ __html: ICONS.trash }}></button>
                                             </td>
                                         </tr>
                                     ))}
-                                    {processes.length === 0 && <tr><td colSpan={2} className="empty-state">No processes.</td></tr>}
+                                    {processes.length === 0 && <tr><td colSpan={2} className="p-8 text-center text-sm italic text-slate-400">No processes.</td></tr>}
                                 </tbody>
                             </table>
                         </div>
