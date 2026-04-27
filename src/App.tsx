@@ -55,6 +55,9 @@ export default function App() {
     const [editingId, setEditingId] = useState<string | null>(null);
     const [page, setPage] = useState(0);
     const [showProcessModal, setShowProcessModal] = useState(false);
+    const [showConfirmModal, setShowConfirmModal] = useState(false);
+    const [confirmMessage, setConfirmMessage] = useState("");
+    const [confirmResolve, setConfirmResolve] = useState<((ok: boolean) => void) | null>(null);
     const [form, setForm] = useState<FormState>(getEmptyForm());
     const [authenticated, setAuthenticated] = useState(false);
     const [checkingAuth, setCheckingAuth] = useState(true);
@@ -95,6 +98,19 @@ export default function App() {
             setForm(f => ({ ...f, inherent_risk_score: inherent, controls_rating: controls, residual_risk_score: residual }));
         }
     }, [form.likelihood_score, form.impact_score, form.control_design_score, form.control_implementation_score]);
+
+    // Confirm modal helper
+    const confirm = (message: string): Promise<boolean> => {
+        setConfirmMessage(message);
+        setShowConfirmModal(true);
+        return new Promise(resolve => {
+            setConfirmResolve(() => (ok: boolean) => {
+                setShowConfirmModal(false);
+                setConfirmResolve(null);
+                resolve(ok);
+            });
+        });
+    };
 
     const handleLogin = () => {
         setAuthenticated(true);
@@ -191,7 +207,7 @@ export default function App() {
     }
 
     async function handleDeleteRisk(id: string) {
-        if (!confirm("Are you sure you want to delete this risk?")) return;
+        if (!await confirm("Are you sure you want to delete this risk?")) return;
         try {
             await deleteRiskData(id);
             await loadData();
@@ -217,7 +233,7 @@ export default function App() {
     }
 
     async function handleDeleteProcess(id: string) {
-        if (!confirm("Delete process? All associated risks will also be deleted.")) return;
+        if (!await confirm("Delete process? All associated risks will also be deleted.")) return;
         try {
             await deleteProcessData(id);
             setProcesses(prev => prev.filter(p => p.id !== id));
@@ -239,6 +255,9 @@ export default function App() {
 
     return (
         <div className="mx-auto max-w-7xl p-6">
+            {/* Edit Mode Backdrop */}
+            <div className={`edit-overlay-bg ${editingId ? 'active' : ''}`} onClick={() => { setEditingId(null); setForm(getEmptyForm()); }} />
+
             {/* Header */}
             <div className="mb-8 flex items-center justify-between">
                 <div>
@@ -258,7 +277,7 @@ export default function App() {
             </div>
 
             {/* Form */}
-            <div className="mb-10 rounded-2xl border border-slate-200 bg-white p-10 shadow-sm">
+            <div className={`mb-10 rounded-2xl border border-slate-200 bg-white p-10 shadow-sm transition-all duration-300 ${editingId ? 'editing-active' : ''}`}>
                 <div className="mb-10 flex items-center justify-between border-b border-slate-100 pb-6">
                     <h2 className="m-0 text-xl font-bold text-slate-800">{editingId ? "Edit Risk Entry" : "New Risk Entry"}</h2>
                     {editingId && <button className="flex items-center gap-2 rounded-lg bg-slate-100 px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-200 transition-all" onClick={() => { setEditingId(null); setForm(getEmptyForm()); }}><ICONS.x size={16} /> Cancel</button>}
@@ -524,6 +543,19 @@ export default function App() {
                                     {processes.length === 0 && <tr><td colSpan={2} className="p-8 text-center text-sm italic text-slate-400">No processes.</td></tr>}
                                 </tbody>
                             </table>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {showConfirmModal && (
+                <div className="modal-overlay">
+                    <div className="modal-card">
+                        <h2 className="mb-1 text-xl font-bold text-slate-800">Confirm</h2>
+                        <p className="mb-6 text-sm text-slate-500">{confirmMessage}</p>
+                        <div className="flex justify-end gap-3">
+                            <button className="btn btn-secondary" onClick={() => confirmResolve?.(false)}>Cancel</button>
+                            <button className="btn btn-danger" onClick={() => confirmResolve?.(true)}>Delete</button>
                         </div>
                     </div>
                 </div>

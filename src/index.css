@@ -58,6 +58,18 @@
     @apply relative z-[1300] ring-2 ring-blue-400 ring-offset-2 !bg-blue-100 !text-blue-700 transition-all duration-300;
     animation: tutorial-pulse 2s infinite;
   }
+
+  .editing-active {
+    @apply shadow-2xl relative z-50;
+  }
+
+  .edit-overlay-bg {
+    @apply fixed inset-0 z-40 bg-slate-900/40 backdrop-blur-[2px] transition-opacity duration-300 pointer-events-none opacity-0;
+  }
+
+  .edit-overlay-bg.active {
+    @apply opacity-100 pointer-events-auto;
+  }
 }
 
 .modal-overlay {
@@ -110,6 +122,14 @@ td {
 
 .btn-primary {
   @apply w-full bg-slate-900 text-white py-2.5 px-4 rounded-md hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:ring-offset-2 transition-all disabled:opacity-50 font-semibold shadow-sm;
+}
+
+.btn-secondary {
+  @apply bg-slate-100 text-slate-700 py-2 px-4 rounded-md hover:bg-slate-200 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 transition-all font-semibold;
+}
+
+.btn-danger {
+  @apply bg-rose-600 text-white py-2 px-4 rounded-md hover:bg-rose-700 focus:outline-none focus:ring-2 focus:ring-rose-600 focus:ring-offset-2 transition-all font-semibold;
 }
 
 .login-btn {
