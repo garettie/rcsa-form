@@ -16,8 +16,8 @@
   input[type="password"], 
   select, 
   textarea {
-    @apply w-full rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-sm outline-none transition-all;
-    @apply focus:border-slate-400 focus:ring-2 focus:ring-slate-400/20;
+    @apply w-full rounded-md border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm outline-none transition-all;
+    @apply focus:border-teal-500 focus:ring-2 focus:ring-teal-500/10;
     min-height: 2.75rem;
   }
 
@@ -26,7 +26,7 @@
   }
 
   label {
-    @apply mb-2 block text-[11px] font-semibold tracking-wider text-slate-500 uppercase;
+    @apply mb-2.5 block text-xs font-semibold tracking-widest text-slate-500 uppercase;
   }
 }
 
@@ -69,7 +69,7 @@
 }
 
 .table-responsive {
-  @apply overflow-x-auto rounded-lg border border-slate-200;
+  @apply overflow-x-auto rounded-xl border border-slate-200 shadow-sm;
 }
 
 table {
@@ -77,11 +77,11 @@ table {
 }
 
 th {
-  @apply p-3 bg-slate-50 text-[11px] font-semibold tracking-wider text-slate-500 uppercase border-b border-slate-200;
+  @apply p-4 bg-slate-50/80 text-xs font-semibold tracking-widest text-slate-500 uppercase border-b border-slate-200;
 }
 
 td {
-  @apply p-3 border-b border-slate-100 align-middle;
+  @apply p-4 border-b border-slate-100 align-middle;
 }
 
 .login-overlay {
@@ -109,7 +109,7 @@ td {
 }
 
 .btn-primary {
-  @apply w-full bg-slate-900 text-white py-2 px-4 rounded-lg hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:ring-offset-2 transition-all disabled:opacity-50 font-medium;
+  @apply w-full bg-slate-900 text-white py-2.5 px-4 rounded-md hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:ring-offset-2 transition-all disabled:opacity-50 font-semibold shadow-sm;
 }
 
 .login-btn {
