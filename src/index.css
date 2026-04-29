@@ -78,10 +78,15 @@
     @apply opacity-100;
   }
   .examples-drawer {
-    @apply translate-x-full transition-transform duration-300;
+    @apply translate-x-[calc(100%+2rem)] transition-transform duration-500;
+    transition-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1);
   }
   .examples-drawer.open {
     @apply translate-x-0;
+  }
+
+  .bouncy-transition {
+    transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
   }
 }
 .modal-overlay {

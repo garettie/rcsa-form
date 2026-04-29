@@ -1,33 +1,56 @@
-import { useState, useEffect } from 'react';
-import { X, Lightbulb } from 'lucide-react';
+import { useState } from 'react';
+import { X, Lightbulb, ChevronRight, ChevronLeft, Search } from 'lucide-react';
 import { MOCK_RISKS } from '../mockData';
 
 interface ExamplesDrawerProps {
   department: string;
-  onClose: () => void;
 }
 
-export default function ExamplesDrawer({ department, onClose }: ExamplesDrawerProps) {
+export default function ExamplesDrawer({ department }: ExamplesDrawerProps) {
   const [isOpen, setIsOpen] = useState(false);
   const examples = MOCK_RISKS.filter(r => r.department === department);
 
-  useEffect(() => {
-    // Small delay to trigger transition after mount
-    const t = setTimeout(() => setIsOpen(true), 10);
-    return () => clearTimeout(t);
-  }, []);
-
-  const handleClose = () => {
-    setIsOpen(false);
-    setTimeout(onClose, 300); // Wait for transition
+  const toggleOpen = () => {
+    if (isOpen) {
+      setIsOpen(false);
+    } else {
+      setIsOpen(true);
+    }
   };
 
   return (
     <>
+      {/* Backdrop - only visible when open */}
       <div 
-        className={`examples-backdrop fixed inset-0 z-[1100] bg-slate-900/10 pointer-events-none transition-opacity duration-300 ${isOpen ? 'open' : ''}`}
+        className={`examples-backdrop fixed inset-0 z-[1100] bg-slate-900/20 backdrop-blur-[2px] transition-opacity duration-300 ${isOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}
+        onClick={() => setIsOpen(false)}
       />
-      <div className={`examples-drawer fixed right-0 top-0 z-[1200] flex h-full w-[450px] flex-col bg-white shadow-2xl transition-transform duration-300 pointer-events-auto border-l border-slate-200 ${isOpen ? 'open' : ''}`}>
+
+      {/* Persistent Trigger Button & Label */}
+      <div 
+        className={`fixed top-1/2 z-[1210] flex items-center gap-3 bouncy-transition ${isOpen ? 'right-[432px]' : 'right-8'} -translate-y-1/2`}
+      >
+        {!isOpen && (
+          <div 
+            className="group flex cursor-pointer items-center gap-1.5 rounded-lg border border-orange-200 bg-orange-50 px-3 py-1.5 shadow-sm transition-all hover:bg-orange-100 whitespace-nowrap"
+            onClick={toggleOpen}
+          >
+            <Search size={13} className="text-orange-600" />
+            <span className="text-[11px] font-semibold text-orange-700">Examples</span>
+          </div>
+        )}
+        
+        <button 
+          onClick={toggleOpen}
+          className="flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-500 shadow-xl transition-all hover:bg-slate-50 hover:text-slate-700 active:scale-90"
+          title={isOpen ? "Close Examples" : "Show Examples"}
+        >
+          {isOpen ? <ChevronRight size={28} /> : <ChevronLeft size={28} />}
+        </button>
+      </div>
+
+      {/* Floating Drawer Card */}
+      <div className={`examples-drawer fixed right-0 top-0 bottom-0 z-[1200] m-4 flex w-[400px] flex-col bg-white shadow-[0_20px_50px_rgba(0,0,0,0.2)] pointer-events-auto border border-slate-200 rounded-2xl overflow-hidden ${isOpen ? 'open' : ''}`}>
         <div className="flex items-center justify-between border-b border-slate-100 bg-slate-50/50 p-6">
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-amber-100 text-amber-600">
@@ -35,11 +58,11 @@ export default function ExamplesDrawer({ department, onClose }: ExamplesDrawerPr
             </div>
             <div>
               <h2 className="text-lg font-bold text-slate-800">Examples</h2>
-              <p className="text-xs text-slate-500">{department}</p>
+              <p className="text-xs text-slate-500">{department || "Select Department"}</p>
             </div>
           </div>
           <button 
-            onClick={handleClose}
+            onClick={() => setIsOpen(false)}
             className="flex h-8 w-8 items-center justify-center rounded-md text-slate-400 hover:bg-slate-200 hover:text-slate-600 transition-colors"
           >
             <X size={18} />
@@ -47,7 +70,9 @@ export default function ExamplesDrawer({ department, onClose }: ExamplesDrawerPr
         </div>
 
         <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-slate-50/30">
-          {examples.length === 0 ? (
+          {!department ? (
+            <div className="text-center text-sm text-slate-500 py-10">Please select a department to see relevant examples.</div>
+          ) : examples.length === 0 ? (
             <div className="text-center text-sm text-slate-500 py-10">No examples found for this department.</div>
           ) : (
             examples.map((ex, i) => (

@@ -56,7 +56,6 @@ export default function App() {
     const [editingId, setEditingId] = useState<string | null>(null);
     const [page, setPage] = useState(0);
     const [showProcessModal, setShowProcessModal] = useState(false);
-    const [showExamples, setShowExamples] = useState(false);
     const [showConfirmModal, setShowConfirmModal] = useState(false);
     const [confirmMessage, setConfirmMessage] = useState("");
     const [confirmResolve, setConfirmResolve] = useState<((ok: boolean) => void) | null>(null);
@@ -82,7 +81,6 @@ export default function App() {
         if (!authenticated || checkingAuth) return;
         if (department) {
             localStorage.setItem("rcsa_department", department);
-            setShowExamples(false);
             loadData();
         } else {
             setShowModal(true);
@@ -314,16 +312,7 @@ export default function App() {
                         </div>
 
                         <div className="md:col-span-3">
-                            <div className="flex items-center gap-4 mb-2.5">
-                                <label className="mb-0">Risk Description *</label>
-                                <button 
-                                    id="examples-btn"
-                                    className="flex items-center gap-1.5 rounded-md bg-amber-50 px-3 py-1 text-xs font-bold text-amber-700 hover:bg-amber-100 hover:text-amber-800 transition-colors"
-                                    onClick={() => setShowExamples(true)}
-                                >
-                                    <ICONS.book size={12} className="text-amber-600" /> Show Examples
-                                </button>
-                            </div>
+                            <label>Risk Description *</label>
                             <textarea id="f-risk_description" rows={3} value={form.risk_description} onChange={e => { updateForm('risk_description', e.target.value); setErrorField(null); }} placeholder="Describe the risk..." required className={errorField === 'f-risk_description' ? 'border-red-500 ring-2 ring-red-100' : ''}></textarea>
                         </div>
 
@@ -575,7 +564,7 @@ export default function App() {
 
             {showRef && <ReferenceGuide onClose={() => setShowRef(false)} />}
             {showTutorial && <Tutorial onClose={() => setShowTutorial(false)} onOpenRef={() => { setShowTutorial(false); setShowRef(true); }} department={department} />}
-            {showExamples && <ExamplesDrawer department={department} onClose={() => setShowExamples(false)} />}
+            <ExamplesDrawer department={department} />
         </div>
     );
 }
