@@ -1,0 +1,99 @@
+import { useState, useEffect } from 'react';
+import { X, Lightbulb } from 'lucide-react';
+import { MOCK_RISKS } from '../mockData';
+
+interface ExamplesDrawerProps {
+  department: string;
+  onClose: () => void;
+}
+
+export default function ExamplesDrawer({ department, onClose }: ExamplesDrawerProps) {
+  const [isOpen, setIsOpen] = useState(false);
+  const examples = MOCK_RISKS.filter(r => r.department === department);
+
+  useEffect(() => {
+    // Small delay to trigger transition after mount
+    const t = setTimeout(() => setIsOpen(true), 10);
+    return () => clearTimeout(t);
+  }, []);
+
+  const handleClose = () => {
+    setIsOpen(false);
+    setTimeout(onClose, 300); // Wait for transition
+  };
+
+  return (
+    <>
+      <div 
+        className={`examples-backdrop fixed inset-0 z-[1100] bg-slate-900/10 pointer-events-none transition-opacity duration-300 ${isOpen ? 'open' : ''}`}
+      />
+      <div className={`examples-drawer fixed right-0 top-0 z-[1200] flex h-full w-[450px] flex-col bg-white shadow-2xl transition-transform duration-300 pointer-events-auto border-l border-slate-200 ${isOpen ? 'open' : ''}`}>
+        <div className="flex items-center justify-between border-b border-slate-100 bg-slate-50/50 p-6">
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-amber-100 text-amber-600">
+              <Lightbulb size={20} />
+            </div>
+            <div>
+              <h2 className="text-lg font-bold text-slate-800">Examples</h2>
+              <p className="text-xs text-slate-500">{department}</p>
+            </div>
+          </div>
+          <button 
+            onClick={handleClose}
+            className="flex h-8 w-8 items-center justify-center rounded-md text-slate-400 hover:bg-slate-200 hover:text-slate-600 transition-colors"
+          >
+            <X size={18} />
+          </button>
+        </div>
+
+        <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-slate-50/30">
+          {examples.length === 0 ? (
+            <div className="text-center text-sm text-slate-500 py-10">No examples found for this department.</div>
+          ) : (
+            examples.map((ex, i) => (
+              <div key={i} className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+                <div className="mb-3">
+                  <h3 className="text-sm font-bold text-slate-800">{ex.process_name}</h3>
+                </div>
+                
+                <div className="space-y-4">
+                  <div>
+                    <span className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">Risk Description</span>
+                    <p className="text-sm text-slate-700 leading-relaxed">{ex.risk_description}</p>
+                  </div>
+                  
+                  <div>
+                    <span className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">Possible Causes</span>
+                    <p className="text-sm text-slate-600 leading-relaxed">{ex.possible_causes}</p>
+                  </div>
+
+                  <div className="flex flex-wrap gap-2">
+                    <span className="inline-flex items-center rounded-md bg-indigo-50 px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-indigo-700">
+                      Root: {ex.root_cause}
+                    </span>
+                    <span className="inline-flex items-center rounded-md bg-rose-50 px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-rose-700">
+                      {ex.event_type}
+                    </span>
+                  </div>
+
+                  <div className="border-t border-slate-100 pt-4">
+                    <span className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">Controls</span>
+                    <p className="text-sm text-slate-700 leading-relaxed mb-2">{ex.control_description}</p>
+                    <div className="flex flex-wrap gap-2">
+                      <span className="inline-flex items-center rounded-md bg-emerald-50 px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-emerald-700">
+                        {ex.control_type}
+                      </span>
+                      <span className="inline-flex items-center rounded-md bg-blue-50 px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-blue-700">
+                        Treatment: {ex.risk_treatment}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+      </div>
+    </>
+  );
+}

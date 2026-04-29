@@ -70,8 +70,20 @@
   .edit-overlay-bg.active {
     @apply opacity-100 pointer-events-auto;
   }
-}
 
+  .examples-backdrop {
+    @apply opacity-0 transition-opacity duration-300;
+  }
+  .examples-backdrop.open {
+    @apply opacity-100;
+  }
+  .examples-drawer {
+    @apply translate-x-full transition-transform duration-300;
+  }
+  .examples-drawer.open {
+    @apply translate-x-0;
+  }
+}
 .modal-overlay {
   @apply fixed inset-0 z-[1100] flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4;
 }

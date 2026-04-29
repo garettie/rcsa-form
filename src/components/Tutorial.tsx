@@ -1,73 +1,87 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { X } from 'lucide-react';
 import { useFloating, offset, flip, shift } from '@floating-ui/react';
-
-const TUTORIAL_STEPS = [
-    {
-        target: "#f-assessment_period",
-        title: "Assessment Period",
-        body: `<p>Enter the time period this submission covers, e.g. <strong>Q1 2026</strong>.</p>`,
-    },
-    {
-        target: ["#f-process_id", "#edit-processes-btn"],
-        title: "Process",
-        body: `<p>The process is the regular work activity this risk is connected to. Click <strong>"Edit"</strong> to add and manage your processes.</p><div class="mt-3 rounded-lg border border-blue-100 bg-blue-50 p-3 text-sm text-blue-800 leading-relaxed"><strong>Examples:</strong> Teller Operations, Payroll Processing, Loan Origination, Cybersecurity, Liquidity Risk Management</div>`,
-    },
-    {
-        target: "#f-risk_description",
-        title: "Risk Description",
-        body: `<p>Describe the risk using the formula: <strong>"Risk of [bad outcome] due to [threat or hazard]"</strong></p><div class="mt-3 rounded-lg border border-blue-100 bg-blue-50 p-3 text-sm text-blue-800 italic leading-relaxed">"Financial loss due to ghost employees on payroll"<br>"Unauthorized fund transfers due to compromised credentials"<br>"Late regulatory reports due to manual consolidation"<br>"Excess cash in branches beyond insured limits due to delayed pickups"</div>`,
-    },
-    {
-        target: "#f-possible_causes",
-        title: "Possible Causes",
-        body: `<p>Why might this risk happen? List the conditions or behaviors that make it more likely. Short phrases are fine.</p><div class="mt-3 rounded-lg border border-blue-100 bg-blue-50 p-3 text-sm text-blue-800 leading-relaxed"><em>"Delayed personnel action notices, manual payroll computations"</em><br><em>"Outdated transaction monitoring rules, insufficient staffing"</em><br><em>"Infrequent penetration testing, outdated libraries"</em></div>`,
-    },
-    {
-        target: "#f-root_cause",
-        title: "Root Cause",
-        body: `<p>Pick the category that best describes the <strong>deepest reason</strong> this risk exists:</p><div class="mt-3 rounded-lg border border-blue-100 bg-blue-50 p-3 text-sm text-blue-800 leading-relaxed"><div class="space-y-1"><div><strong>People</strong> — human error, lack of training, misconduct</div><div><strong>Process</strong> — missing, unclear, or broken procedures</div><div><strong>Systems</strong> — technology or software failures</div><div><strong>External Events</strong> — factors outside the organization's control</div></div></div>`,
-    },
-    {
-        target: "#f-event_type",
-        title: "Event Type",
-        body: `<p>Operational Risk Event Types.</p><div class="mt-3 rounded-lg border border-blue-100 bg-blue-50 p-3 text-sm text-blue-800 leading-relaxed"><div class="space-y-1"><div><strong>Execution, delivery and process management</strong> — work errors (most common)</div><div><strong>Business disruption and system failures</strong> — IT outages</div><div><strong>External fraud</strong> — fraud committed by outsider</div><div><strong>Internal fraud</strong> — fraud committed by internal party</div><div><strong>Employment practices and workplace safety</strong> — HR and safety claims</div><div><strong>Damage to physical assets</strong> — property and equipment loss</div><div><strong>Clients, products and business practices</strong> — client-facing losses</div></div></div><p class="mt-3">If unsure, check the Reference Guide for details.</p>`,
-    },
-    {
-        target: ["#f-likelihood_score", "#f-impact_score", "#cf-inherent-score"],
-        title: "Inherent Risk: Likelihood & Impact",
-        body: `<p>Assess the risk <strong>before</strong> considering any controls you have in place.</p><div class="mt-3 rounded-lg border border-blue-100 bg-blue-50 p-3 text-sm text-blue-800 leading-relaxed"><div class="space-y-2"><div><strong>Likelihood:</strong> How often could this happen?</div><div><strong>Impact:</strong> How bad would it be if it happened?</div></div></div>`,
-    },
-    {
-        target: "#f-control_description",
-        title: "Controls",
-        body: `<p>What is currently being done to mitigate this risk? Be specific about the actual activities, reviews, or systems in place.</p>`,
-    },
-    {
-        target: "#f-control_type",
-        title: "Control Type",
-        body: `<p>Pick the category that best describes how the control works:</p><div class="mt-3 rounded-lg border border-blue-100 bg-blue-50 p-3 text-sm text-blue-800 leading-relaxed"><div class="space-y-2"><div><strong>Preventive:</strong> Reduces the likelihood of a risk event happening (e.g. dual authorization).</div><div><strong>Detective:</strong> Identifies the occurrence of a risk event (e.g. CCTV, smoke detector).</div><div><strong>Corrective:</strong> Mitigates the aftermath of a risk event (e.g. data backup).</div></div></div>`,
-    },
-    {
-        target: ["#f-control_design_score", "#f-control_implementation_score", "#cf-controls-rating"],
-        title: "Control Ratings",
-        body: `<p>Rate how effective the controls are:</p><div class="mt-3 rounded-lg border border-blue-100 bg-blue-50 p-3 text-sm text-blue-800 leading-relaxed"><div class="space-y-2"><div><strong>Design:</strong> Is the control logically capable of stopping the risk?</div><div><strong>Implementation:</strong> Are people actually following the control?</div></div></div>`,
-    },
-    {
-        target: "#cf-residual",
-        title: "Residual Risk",
-        body: `<p>This is your final risk score after controls are applied. It is automatically calculated.</p>`,
-    },
-    {
-        target: ["#f-risk_treatment", "#f-action_plan", "#f-action_plan_deadline", "#f-status"],
-        title: "Risk Treatment & Action Plan",
-        body: `<p>Decide what to do with the residual risk.</p><div class="mt-3 rounded-lg border border-blue-100 bg-blue-50 p-3 text-sm text-blue-800 leading-relaxed"><div class="space-y-1"><strong>Accept:</strong> Do nothing more.</div><div><strong>Reduce:</strong> Add an action plan to improve controls.</div><div><strong>Avoid:</strong> Stop the activity.</div><div><strong>Transfer:</strong> Insurance/outsourcing.</div></div><div class="mt-3 rounded-lg border border-emerald-100 bg-emerald-50 p-3 text-sm text-emerald-800 leading-relaxed"><strong>SMART action plans:</strong> Specific (what exactly will be done), Measurable (how you'll know it's done), Achievable (realistic given resources), Relevant (actually reduces this risk), Time-bound (deadline date).</div>`,
-    }
-];
+import { MOCK_RISKS } from '../mockData';
 
 interface TutorialProps {
     onClose: () => void;
     onOpenRef: () => void;
+    department?: string;
+}
+
+function getTutorialSteps(department?: string) {
+    const defaultExamples = `"Financial loss due to ghost employees on payroll"<br>"Unauthorized fund transfers due to compromised credentials"<br>"Late regulatory reports due to manual consolidation"<br>"Excess cash in branches beyond insured limits due to delayed pickups"`;
+    
+    let riskExamples = defaultExamples;
+    if (department) {
+        const deptRisks = MOCK_RISKS.filter(r => r.department === department).slice(0, 4);
+        if (deptRisks.length > 0) {
+            riskExamples = deptRisks.map(r => `"${r.risk_description}"`).join('<br>');
+        }
+    }
+
+    return [
+        {
+            target: "#f-assessment_period",
+            title: "Assessment Period",
+            body: `<p>Enter the time period this submission covers, e.g. <strong>Q1 2026</strong>.</p>`,
+        },
+        {
+            target: ["#f-process_id", "#edit-processes-btn"],
+            title: "Process",
+            body: `<p>The process is the regular work activity this risk is connected to. Click <strong>"Edit"</strong> to add and manage your processes.</p><div class="mt-3 rounded-lg border border-blue-100 bg-blue-50 p-3 text-sm text-blue-800 leading-relaxed"><strong>Examples:</strong> Teller Operations, Payroll Processing, Loan Origination, Cybersecurity, Liquidity Risk Management</div>`,
+        },
+        {
+            target: "#f-risk_description",
+            title: "Risk Description",
+            body: `<p>Describe the risk using the formula: <strong>"Risk of [bad outcome] due to [threat or hazard]"</strong></p><div class="mt-3 rounded-lg border border-blue-100 bg-blue-50 p-3 text-sm text-blue-800 italic leading-relaxed">${riskExamples}</div>`,
+        },
+        {
+            target: "#f-possible_causes",
+            title: "Possible Causes",
+            body: `<p>Why might this risk happen? List the conditions or behaviors that make it more likely. Short phrases are fine.</p><div class="mt-3 rounded-lg border border-blue-100 bg-blue-50 p-3 text-sm text-blue-800 leading-relaxed"><em>"Delayed personnel action notices, manual payroll computations"</em><br><em>"Outdated transaction monitoring rules, insufficient staffing"</em><br><em>"Infrequent penetration testing, outdated libraries"</em></div>`,
+        },
+        {
+            target: "#f-root_cause",
+            title: "Root Cause",
+            body: `<p>Pick the category that best describes the <strong>deepest reason</strong> this risk exists:</p><div class="mt-3 rounded-lg border border-blue-100 bg-blue-50 p-3 text-sm text-blue-800 leading-relaxed"><div class="space-y-1"><div><strong>People</strong> — human error, lack of training, misconduct</div><div><strong>Process</strong> — missing, unclear, or broken procedures</div><div><strong>Systems</strong> — technology or software failures</div><div><strong>External Events</strong> — factors outside the organization's control</div></div></div>`,
+        },
+        {
+            target: "#f-event_type",
+            title: "Event Type",
+            body: `<p>Operational Risk Event Types.</p><div class="mt-3 rounded-lg border border-blue-100 bg-blue-50 p-3 text-sm text-blue-800 leading-relaxed"><div class="space-y-1"><div><strong>Execution, delivery and process management</strong> — work errors (most common)</div><div><strong>Business disruption and system failures</strong> — IT outages</div><div><strong>External fraud</strong> — fraud committed by outsider</div><div><strong>Internal fraud</strong> — fraud committed by internal party</div><div><strong>Employment practices and workplace safety</strong> — HR and safety claims</div><div><strong>Damage to physical assets</strong> — property and equipment loss</div><div><strong>Clients, products and business practices</strong> — client-facing losses</div></div></div><p class="mt-3">If unsure, check the Reference Guide for details.</p>`,
+        },
+        {
+            target: ["#f-likelihood_score", "#f-impact_score", "#cf-inherent-score"],
+            title: "Inherent Risk: Likelihood & Impact",
+            body: `<p>Assess the risk <strong>before</strong> considering any controls you have in place.</p><div class="mt-3 rounded-lg border border-blue-100 bg-blue-50 p-3 text-sm text-blue-800 leading-relaxed"><div class="space-y-2"><div><strong>Likelihood:</strong> How often could this happen?</div><div><strong>Impact:</strong> How bad would it be if it happened?</div></div></div>`,
+        },
+        {
+            target: "#f-control_description",
+            title: "Controls",
+            body: `<p>What is currently being done to mitigate this risk? Be specific about the actual activities, reviews, or systems in place.</p>`,
+        },
+        {
+            target: "#f-control_type",
+            title: "Control Type",
+            body: `<p>Pick the category that best describes how the control works:</p><div class="mt-3 rounded-lg border border-blue-100 bg-blue-50 p-3 text-sm text-blue-800 leading-relaxed"><div class="space-y-2"><div><strong>Preventive:</strong> Reduces the likelihood of a risk event happening (e.g. dual authorization).</div><div><strong>Detective:</strong> Identifies the occurrence of a risk event (e.g. CCTV, smoke detector).</div><div><strong>Corrective:</strong> Mitigates the aftermath of a risk event (e.g. data backup).</div></div></div>`,
+        },
+        {
+            target: ["#f-control_design_score", "#f-control_implementation_score", "#cf-controls-rating"],
+            title: "Control Ratings",
+            body: `<p>Rate how effective the controls are:</p><div class="mt-3 rounded-lg border border-blue-100 bg-blue-50 p-3 text-sm text-blue-800 leading-relaxed"><div class="space-y-2"><div><strong>Design:</strong> Is the control logically capable of stopping the risk?</div><div><strong>Implementation:</strong> Are people actually following the control?</div></div></div>`,
+        },
+        {
+            target: "#cf-residual",
+            title: "Residual Risk",
+            body: `<p>This is your final risk score after controls are applied. It is automatically calculated.</p>`,
+        },
+        {
+            target: ["#f-risk_treatment", "#f-action_plan", "#f-action_plan_deadline", "#f-status"],
+            title: "Risk Treatment & Action Plan",
+            body: `<p>Decide what to do with the residual risk.</p><div class="mt-3 rounded-lg border border-blue-100 bg-blue-50 p-3 text-sm text-blue-800 leading-relaxed"><div class="space-y-1"><strong>Accept:</strong> Do nothing more.</div><div><strong>Reduce:</strong> Add an action plan to improve controls.</div><div><strong>Avoid:</strong> Stop the activity.</div><div><strong>Transfer:</strong> Insurance/outsourcing.</div></div><div class="mt-3 rounded-lg border border-emerald-100 bg-emerald-50 p-3 text-sm text-emerald-800 leading-relaxed"><strong>SMART action plans:</strong> Specific (what exactly will be done), Measurable (how you'll know it's done), Achievable (realistic given resources), Relevant (actually reduces this risk), Time-bound (deadline date).</div>`,
+        }
+    ];
 }
 
 function clearTutorialHighlights() {
@@ -82,12 +96,14 @@ function clearTutorialHighlights() {
     });
 }
 
-export default function Tutorial({ onClose, onOpenRef }: TutorialProps) {
+export default function Tutorial({ onClose, onOpenRef, department }: TutorialProps) {
     const [step, setStep] = useState(0);
     const [isClosing, setIsClosing] = useState(false);
     const [hasLanded, setHasLanded] = useState(false);
     const [tooltipSize, setTooltipSize] = useState<{ width: number | 'auto', height: number | 'auto' }>({ width: 'auto', height: 'auto' });
 
+    const TUTORIAL_STEPS = useMemo(() => getTutorialSteps(department), [department]);
+    
     const current = TUTORIAL_STEPS[step];
     const currentTargets = Array.isArray(current.target) ? current.target : [current.target];
     const isMultiTarget = currentTargets.length > 1;
