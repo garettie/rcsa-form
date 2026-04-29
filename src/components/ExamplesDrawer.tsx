@@ -4,11 +4,14 @@ import { MOCK_RISKS } from '../mockData';
 
 interface ExamplesDrawerProps {
   department: string;
+  isVisible: boolean;
 }
 
-export default function ExamplesDrawer({ department }: ExamplesDrawerProps) {
+export default function ExamplesDrawer({ department, isVisible }: ExamplesDrawerProps) {
   const [isOpen, setIsOpen] = useState(false);
   const examples = MOCK_RISKS.filter(r => r.department === department);
+
+  if (!isVisible) return null;
 
   const toggleOpen = () => {
     if (isOpen) {

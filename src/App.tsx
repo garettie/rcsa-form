@@ -564,7 +564,7 @@ export default function App() {
 
             {showRef && <ReferenceGuide onClose={() => setShowRef(false)} />}
             {showTutorial && <Tutorial onClose={() => setShowTutorial(false)} onOpenRef={() => { setShowTutorial(false); setShowRef(true); }} department={department} />}
-            <ExamplesDrawer department={department} />
+            <ExamplesDrawer department={department} isVisible={!showModal} />
         </div>
     );
 }
