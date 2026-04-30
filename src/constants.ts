@@ -1,4 +1,4 @@
-import { Search, Edit2, Trash2, Save, X, Plus, ChevronDown, Book, Check, LogOut } from 'lucide-react';
+import { Search, Edit2, Trash2, Save, X, Plus, ChevronDown, Book, Check, LogOut, Eye } from 'lucide-react';
 
 export const DEPARTMENTS = [
         "Accounting Department",
@@ -81,4 +81,5 @@ export const ICONS = {
   book: Book,
   check: Check,
   logout: LogOut,
+  view: Eye,
 };
