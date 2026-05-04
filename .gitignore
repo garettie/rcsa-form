@@ -46,3 +46,4 @@ Thumbs.db
 *.backup
 *.bak
 rcsa-data-entry.backup.html
+.vercel

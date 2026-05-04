@@ -239,7 +239,7 @@ export default function ReferenceGuide({ onClose }: ReferenceGuideProps) {
     <div 
       className="fixed inset-0 z-[1100] flex justify-center overflow-y-auto bg-slate-900/50 p-4 backdrop-blur-sm md:p-8" 
       id="ref-overlay" 
-      onClick={(e) => { if ((e.target as any).id === 'ref-overlay') onClose(); }}
+      onClick={(e) => { if ((e.target as HTMLElement).id === 'ref-overlay') onClose(); }}
     >
       <div className="self-start w-full max-w-5xl rounded-2xl bg-white p-6 shadow-2xl md:p-10">
         <div className="mb-6 flex items-center justify-between">

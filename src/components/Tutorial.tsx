@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useLayoutEffect } from 'react';
 import { X } from 'lucide-react';
 import { useFloating, offset, flip, shift } from '@floating-ui/react';
 import { MOCK_RISKS } from '../mockData';
@@ -99,13 +99,12 @@ function clearTutorialHighlights() {
 export default function Tutorial({ onClose, onOpenRef, department }: TutorialProps) {
     const [step, setStep] = useState(0);
     const [isClosing, setIsClosing] = useState(false);
-    const [hasLanded, setHasLanded] = useState(false);
     const [tooltipSize, setTooltipSize] = useState<{ width: number | 'auto', height: number | 'auto' }>({ width: 'auto', height: 'auto' });
 
     const TUTORIAL_STEPS = useMemo(() => getTutorialSteps(department), [department]);
     
     const current = TUTORIAL_STEPS[step];
-    const currentTargets = Array.isArray(current.target) ? current.target : [current.target];
+    const currentTargets = useMemo(() => Array.isArray(current.target) ? current.target : [current.target], [current.target]);
     const isMultiTarget = currentTargets.length > 1;
 
     const { refs, floatingStyles, isPositioned } = useFloating({
@@ -123,19 +122,21 @@ export default function Tutorial({ onClose, onOpenRef, department }: TutorialPro
     const isLast = step === totalSteps - 1;
 
     // Morph Logic: Capture size before step changes
-    useEffect(() => {
+    useLayoutEffect(() => {
         const el = refs.floating.current;
-        if (el && hasLanded && !isClosing) {
+        if (el && isPositioned && !isClosing) {
             // Record current size
             const rect = el.getBoundingClientRect();
             setTooltipSize({ width: rect.width, height: rect.height });
             
             // Allow content to change, then measure new size in next frame
-            requestAnimationFrame(() => {
+            const raf = requestAnimationFrame(() => {
+                if (!refs.floating.current) return;
+                const innerEl = refs.floating.current;
                 // Clear fixed size to let it calculate auto size based on new content
-                el.style.width = 'auto';
-                el.style.height = 'auto';
-                const newRect = el.getBoundingClientRect();
+                innerEl.style.width = 'auto';
+                innerEl.style.height = 'auto';
+                const newRect = innerEl.getBoundingClientRect();
                 
                 // Set the NEW size to trigger the transition
                 setTooltipSize({ width: newRect.width, height: newRect.height });
@@ -146,14 +147,9 @@ export default function Tutorial({ onClose, onOpenRef, department }: TutorialPro
                 }, 600); // Slightly longer than transition
                 return () => clearTimeout(timer);
             });
+            return () => cancelAnimationFrame(raf);
         }
-    }, [step, hasLanded, isClosing, refs.floating]);
-
-    useEffect(() => {
-        if (isPositioned && !hasLanded) {
-            setHasLanded(true);
-        }
-    }, [isPositioned, hasLanded]);
+    }, [step, isPositioned, isClosing, refs.floating]);
 
     useEffect(() => {
         clearTutorialHighlights();
@@ -195,7 +191,7 @@ export default function Tutorial({ onClose, onOpenRef, department }: TutorialPro
         }
 
         return () => clearTutorialHighlights();
-    }, [step, current, refs]);
+    }, [step, currentTargets, refs]);
 
     const handleClose = () => {
         setIsClosing(true);
@@ -211,18 +207,17 @@ export default function Tutorial({ onClose, onOpenRef, department }: TutorialPro
         }
     };
 
-    const isVisible = isPositioned && hasLanded && !isClosing;
-    const useTransition = hasLanded;
+    const isVisible = isPositioned && !isClosing;
 
     return (
         <>
             <div
-                className={`fixed inset-0 z-[1200] bg-slate-900/60 transition-opacity duration-500 ${isClosing ? 'opacity-0' : (isPositioned && hasLanded) ? 'opacity-100' : 'opacity-0'}`}
+                className={`fixed inset-0 z-[1200] bg-slate-900/60 transition-opacity duration-500 ${isClosing ? 'opacity-0' : isPositioned ? 'opacity-100' : 'opacity-0'}`}
                 onClick={handleClose}
             />
             <div
                 ref={refs.setFloating}
-                className={`tutorial-tooltip fixed z-[1300] w-[90%] max-w-md rounded-2xl bg-white p-6 shadow-2xl overflow-hidden ${useTransition ? 'transition-all duration-500' : ''} ${isClosing ? 'translate-y-4 opacity-0' : isVisible ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
+                className={`tutorial-tooltip fixed z-[1300] w-[90%] max-w-md rounded-2xl bg-white p-6 shadow-2xl overflow-hidden ${isPositioned ? 'transition-all duration-500' : ''} ${isClosing ? 'translate-y-4 opacity-0' : isVisible ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
                     }`}
                 style={{
                     ...floatingStyles,
