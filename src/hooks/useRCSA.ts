@@ -106,6 +106,8 @@ export function useRCSA() {
         if (department) {
             localStorage.setItem("rcsa_department", department);
             loadData({ silent: true });
+        } else {
+            setLoading(false);
         }
         // eslint-disable-next-line react-hooks/set-state-in-effect
     }, [department, authenticated, checkingAuth, loadData]);
