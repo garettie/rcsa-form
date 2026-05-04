@@ -99,6 +99,7 @@ function clearTutorialHighlights() {
 export default function Tutorial({ onClose, onOpenRef, department }: TutorialProps) {
     const [step, setStep] = useState(0);
     const [isClosing, setIsClosing] = useState(false);
+    const [hasLanded, setHasLanded] = useState(false);
     const [tooltipSize, setTooltipSize] = useState<{ width: number | 'auto', height: number | 'auto' }>({ width: 'auto', height: 'auto' });
 
     const TUTORIAL_STEPS = useMemo(() => getTutorialSteps(department), [department]);
@@ -124,7 +125,7 @@ export default function Tutorial({ onClose, onOpenRef, department }: TutorialPro
     // Morph Logic: Capture size before step changes
     useLayoutEffect(() => {
         const el = refs.floating.current;
-        if (el && isPositioned && !isClosing) {
+        if (el && hasLanded && !isClosing) {
             // Record current size
             const rect = el.getBoundingClientRect();
             setTooltipSize({ width: rect.width, height: rect.height });
@@ -149,7 +150,14 @@ export default function Tutorial({ onClose, onOpenRef, department }: TutorialPro
             });
             return () => cancelAnimationFrame(raf);
         }
-    }, [step, isPositioned, isClosing, refs.floating]);
+    }, [step, hasLanded, isClosing, refs.floating]);
+
+    useEffect(() => {
+        if (isPositioned && !hasLanded) {
+            setHasLanded(true);
+        }
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+    }, [isPositioned, hasLanded]);
 
     useEffect(() => {
         clearTutorialHighlights();
@@ -207,17 +215,18 @@ export default function Tutorial({ onClose, onOpenRef, department }: TutorialPro
         }
     };
 
-    const isVisible = isPositioned && !isClosing;
+    const isVisible = isPositioned && hasLanded && !isClosing;
+    const useTransition = hasLanded;
 
     return (
         <>
             <div
-                className={`fixed inset-0 z-[1200] bg-slate-900/60 transition-opacity duration-500 ${isClosing ? 'opacity-0' : isPositioned ? 'opacity-100' : 'opacity-0'}`}
+                className={`fixed inset-0 z-[1200] bg-slate-900/60 transition-opacity duration-500 ${isClosing ? 'opacity-0' : (isPositioned && hasLanded) ? 'opacity-100' : 'opacity-0'}`}
                 onClick={handleClose}
             />
             <div
                 ref={refs.setFloating}
-                className={`tutorial-tooltip fixed z-[1300] w-[90%] max-w-md rounded-2xl bg-white p-6 shadow-2xl overflow-hidden ${isPositioned ? 'transition-all duration-500' : ''} ${isClosing ? 'translate-y-4 opacity-0' : isVisible ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
+                className={`tutorial-tooltip fixed z-[1300] w-[90%] max-w-md rounded-2xl bg-white p-6 shadow-2xl overflow-hidden ${useTransition ? 'transition-all duration-500' : ''} ${isClosing ? 'translate-y-4 opacity-0' : isVisible ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
                     }`}
                 style={{
                     ...floatingStyles,
