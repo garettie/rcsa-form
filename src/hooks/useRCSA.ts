@@ -105,11 +105,9 @@ export function useRCSA() {
         if (!authenticated || checkingAuth) return;
         if (department) {
             localStorage.setItem("rcsa_department", department);
-            // Push to next tick to avoid cascading render lint error
-            setTimeout(() => {
-                loadData({ silent: true });
-            }, 0);
+            loadData({ silent: true });
         }
+        // eslint-disable-next-line react-hooks/set-state-in-effect
     }, [department, authenticated, checkingAuth, loadData]);
 
     const confirm = useCallback((message: string): Promise<boolean> => {
