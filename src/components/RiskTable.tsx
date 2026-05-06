@@ -11,7 +11,7 @@ interface RiskTableProps {
     onPageChange: (newPage: number) => void;
 }
 
-const PAGE_SIZE = 10;
+const PAGE_SIZE = 20;
 
 export default function RiskTable({
     risks,
@@ -31,10 +31,10 @@ export default function RiskTable({
                     <thead>
                         <tr>
                             <th>Process</th>
-                            <th>Risk Description</th>
-                            <th>Residual</th>
-                            <th>Status</th>
-                            <th className="text-right">Actions</th>
+                            <th className="min-w-[300px]">Risk Description</th>
+                            <th className="min-w-[140px]">Residual</th>
+                            <th className="min-w-[120px]">Status</th>
+                            <th className="min-w-[100px] text-right">Actions</th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-50">
@@ -46,13 +46,13 @@ export default function RiskTable({
                                 return (
                                     <tr key={r.id} className="hover:bg-slate-50 even:bg-slate-50/50 transition-colors">
                                         <td className="font-medium text-slate-700">{r.process_name}</td>
-                                        <td className="max-w-md truncate text-slate-600">{r.risk_description}</td>
-                                        <td>
+                                        <td className="max-w-xl whitespace-normal break-words text-slate-600">{r.risk_description}</td>
+                                        <td className="whitespace-nowrap">
                                             <span className="rounded px-2 py-0.5 text-[11px] font-bold uppercase tracking-wider" style={{ background: `${RISK_COLORS[rl as keyof typeof RISK_COLORS]}18`, color: RISK_COLORS[rl as keyof typeof RISK_COLORS] }}>
                                                 {r.residual_risk_score} - {RESIDUAL_RISK_LABELS[rl as keyof typeof RESIDUAL_RISK_LABELS]}
                                             </span>
                                         </td>
-                                        <td>
+                                        <td className="whitespace-nowrap">
                                             <span className={`rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-widest ${r.status === 'Open' ? 'bg-amber-100 text-amber-700' : r.status === 'Closed' ? 'bg-emerald-100 text-emerald-700' : 'bg-blue-100 text-blue-700'}`}>
                                                 {r.status}
                                             </span>
