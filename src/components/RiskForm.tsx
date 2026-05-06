@@ -57,7 +57,7 @@ export default function RiskForm({
                         <label>Process *</label>
                         <div className="flex gap-3">
                             {processes.length === 0 ? (
-                                <div className="flex-1 rounded-lg border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm italic text-slate-400">No processes yet. Add one using Edit Processes</div>
+                                <div id="f-process_id-empty" className="flex-1 rounded-lg border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm italic text-slate-400">No processes yet. Add one using Edit Processes</div>
                             ) : (
                                 <select id="f-process_id" value={form.process_id} onChange={e => { updateForm('process_id', e.target.value); }} className={`select-custom ${!form.process_id ? 'text-slate-400' : ''} ${errorField === 'f-process_id' ? 'border-red-500 ring-2 ring-red-100' : ''}`} disabled={viewOnly}>
                                     <option value="" disabled>Select process...</option>
@@ -177,12 +177,12 @@ export default function RiskForm({
                     </div>
                     <div className="md:col-span-2">
                         <label>Action Plan</label>
-                        <input id="f-action_plan" type="text" value={form.action_plan} onChange={e => { updateForm('action_plan', e.target.value); }} placeholder="What actions will be taken?" className={errorField === 'f-action_plan' ? 'border-red-500 ring-2 ring-red-100' : ''} disabled={viewOnly} />
+                        <input id="f-action_plan" type="text" value={form.action_plan ?? ""} onChange={e => { updateForm('action_plan', e.target.value); }} placeholder="What actions will be taken?" className={errorField === 'f-action_plan' ? 'border-red-500 ring-2 ring-red-100' : ''} disabled={viewOnly} />
                     </div>
 
                     <div>
                         <label>Action Plan Deadline</label>
-                        <input id="f-action_plan_deadline" type="date" value={form.action_plan_deadline} onChange={e => { updateForm('action_plan_deadline', e.target.value); }} className={errorField === 'f-action_plan_deadline' ? 'border-red-500 ring-2 ring-red-100' : ''} disabled={viewOnly} />
+                        <input id="f-action_plan_deadline" type="date" value={form.action_plan_deadline ?? ""} onChange={e => { updateForm('action_plan_deadline', e.target.value); }} className={errorField === 'f-action_plan_deadline' ? 'border-red-500 ring-2 ring-red-100' : ''} disabled={viewOnly} />
                     </div>
                     <div className="md:col-span-2">
                         <label>Status</label>

@@ -27,8 +27,8 @@ function getEmptyForm(): FormState {
         controls_rating: 1,
         residual_risk_score: 1,
         risk_treatment: "Accept",
-        action_plan: "",
-        action_plan_deadline: "",
+        action_plan: null,
+        action_plan_deadline: null,
         status: "Open",
         assessment_period: "",
         process_id: "",
@@ -51,6 +51,13 @@ export function getResidualRiskScore(inherentScore: number, controlsRating: numb
 }
 
 export { getRiskLevel };
+
+function getErrorMessage(e: unknown): string {
+    if (e instanceof Error) return e.message;
+    if (e && typeof e === 'object' && 'message' in e) return String((e as { message: unknown }).message);
+    if (typeof e === 'string') return e;
+    return 'Unknown error';
+}
 
 export function useRCSA() {
     const [department, setDepartment] = useState(() => localStorage.getItem("rcsa_department") || "");
@@ -84,21 +91,23 @@ export function useRCSA() {
             setProcesses(ps);
             setRisks(rs);
         } catch (e: unknown) {
-            const message = e instanceof Error ? e.message : 'Unknown error';
+            const message = getErrorMessage(e);
             setError(message);
         }
         setLoading(false);
     }, [department]);
 
     useEffect(() => {
-        supabase.auth.getSession().then(({ data: { session } }) => {
+        const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
             setAuthenticated(!!session);
             setCheckingAuth(false);
             if (!session) {
                 setDepartment("");
+                setShowModal(true);
                 localStorage.removeItem("rcsa_department");
             }
         });
+        return () => subscription.unsubscribe();
     }, []);
 
     useEffect(() => {
@@ -109,7 +118,6 @@ export function useRCSA() {
         } else {
             setLoading(false);
         }
-        // eslint-disable-next-line react-hooks/set-state-in-effect
     }, [department, authenticated, checkingAuth, loadData]);
 
     const confirm = useCallback((message: string): Promise<boolean> => {
@@ -130,9 +138,6 @@ export function useRCSA() {
 
     const handleLogout = useCallback(async () => {
         await supabase.auth.signOut();
-        setAuthenticated(false);
-        localStorage.removeItem("rcsa_department");
-        setDepartment("");
     }, []);
 
     const validateForm = useCallback((): { error: string; field: string } | null => {
@@ -191,14 +196,13 @@ export function useRCSA() {
                 action_plan: form.action_plan?.trim() || null,
                 action_plan_deadline: form.action_plan_deadline || null
             };
-            // @ts-expect-error Supabase expects null for empty dates, but FormState uses string
             await saveRiskData(dataToSave, editingId);
             await loadData({ silent: true });
             setForm(getEmptyForm());
             setEditingId(null);
         } catch (e: unknown) {
-            const message = e && typeof e === 'object' && 'message' in e ? String(e.message) : (typeof e === 'string' ? e : 'Unknown error');
-            setError("Failed to save: " + message);
+const message = getErrorMessage(e);
+                setError("Failed to save: " + message);
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
         setSaving(false);
@@ -210,7 +214,7 @@ export function useRCSA() {
             await deleteRiskData(id);
             await loadData({ silent: true });
         } catch (e: unknown) {
-            const message = e && typeof e === 'object' && 'message' in e ? String(e.message) : (typeof e === 'string' ? e : 'Unknown error');
+            const message = getErrorMessage(e);
             setError("Failed to delete: " + message);
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }

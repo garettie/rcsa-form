@@ -27,7 +27,7 @@ function getTutorialSteps(department?: string) {
             body: `<p>Enter the time period this submission covers, e.g. <strong>Q1 2026</strong>.</p>`,
         },
         {
-            target: ["#f-process_id", "#edit-processes-btn"],
+            target: ["#f-process_id", "#f-process_id-empty", "#edit-processes-btn"],
             title: "Process",
             body: `<p>The process is the regular work activity this risk is connected to. Click <strong>"Edit"</strong> to add and manage your processes.</p><div class="mt-3 rounded-lg border border-blue-100 bg-blue-50 p-3 text-sm text-blue-800 leading-relaxed"><strong>Examples:</strong> Teller Operations, Payroll Processing, Loan Origination, Cybersecurity, Liquidity Risk Management</div>`,
         },

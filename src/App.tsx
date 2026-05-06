@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { Book, HelpCircle } from 'lucide-react';
 import { useRCSA } from './hooks/useRCSA';
 import { DEPARTMENTS, ICONS } from './constants';
@@ -51,6 +52,13 @@ export default function App() {
         controlsLevel,
         residualLevel,
     } = useRCSA();
+
+    useEffect(() => {
+        if (!showModal || !department) return;
+        const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') setShowModal(false); };
+        document.addEventListener('keydown', handler);
+        return () => document.removeEventListener('keydown', handler);
+    }, [showModal, department, setShowModal]);
 
     if (checkingAuth) {
         return <div className="min-h-screen bg-slate-50 flex items-center justify-center">Loading...</div>;
@@ -119,9 +127,14 @@ export default function App() {
 
             {/* Modals */}
             {showModal && (
-                <div className="modal-overlay">
-                    <div className="modal-card">
-                        <h2 className="mb-1 text-xl font-bold text-slate-800">Select Department</h2>
+                <div className="modal-overlay" onClick={() => { if (department) setShowModal(false); }}>
+                    <div className="modal-card" onClick={e => e.stopPropagation()}>
+                        <div className="mb-1 flex items-center justify-between">
+                            <h2 className="text-xl font-bold text-slate-800">Select Department</h2>
+                            {department && (
+                                <button className="flex items-center text-slate-400 hover:text-slate-600 transition-colors" onClick={() => setShowModal(false)} aria-label="Close"><ICONS.x size={18} /></button>
+                            )}
+                        </div>
                         <p className="mb-6 text-sm text-slate-500">Please select your department to continue.</p>
                         <select value={department} onChange={e => {
                             setDepartment(e.target.value);

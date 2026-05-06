@@ -14,8 +14,8 @@ export interface FormState {
   controls_rating: number;
   residual_risk_score: number;
   risk_treatment: string;
-  action_plan: string;
-  action_plan_deadline: string;
+  action_plan: string | null;
+  action_plan_deadline: string | null;
   status: string;
   assessment_period: string;
   process_id: string;

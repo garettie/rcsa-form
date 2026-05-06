@@ -1,3 +1,4 @@
+import { useRef } from 'react';
 import type { Process } from '../types';
 import { ICONS } from '../constants';
 
@@ -16,11 +17,13 @@ export default function ProcessModal({
     onAdd,
     onDelete,
 }: ProcessModalProps) {
+    const inputRef = useRef<HTMLInputElement>(null);
+
     if (!show) return null;
 
     const handleAdd = () => {
-        const el = document.getElementById('new-process-name') as HTMLInputElement;
-        if (el?.value) {
+        const el = inputRef.current;
+        if (el && el.value) {
             onAdd(el.value);
             el.value = '';
         }
@@ -34,7 +37,7 @@ export default function ProcessModal({
                     <button className="flex h-8 w-8 items-center justify-center rounded-md text-slate-400 hover:bg-slate-100" onClick={onClose}><ICONS.x size={16} /></button>
                 </div>
                 <div className="mb-6 flex gap-2">
-                    <input type="text" id="new-process-name" placeholder="New process name..." />
+                    <input type="text" ref={inputRef} id="new-process-name" placeholder="New process name..." />
                     <button className="btn btn-primary whitespace-nowrap px-6" onClick={handleAdd}>Add Process</button>
                 </div>
                 <div className="table-responsive">

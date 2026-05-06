@@ -5,10 +5,9 @@ const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 const SUPABASE_KEY = import.meta.env.VITE_SUPABASE_KEY;
 
 export const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
-export const sb = supabase;
 
 export async function fetchProcesses(department: string) {
-  const { data, error } = await sb
+  const { data, error } = await supabase
     .from('processes')
     .select('*')
     .eq('department', department)
@@ -18,7 +17,7 @@ export async function fetchProcesses(department: string) {
 }
 
 export async function fetchRisks(department: string) {
-  const { data, error } = await sb
+  const { data, error } = await supabase
     .from('risks')
     .select('*')
     .eq('department', department)
@@ -29,21 +28,21 @@ export async function fetchRisks(department: string) {
 
 export async function saveRiskData(riskData: Partial<Risk>, id: string | null) {
   if (id) {
-    const { error } = await sb.from('risks').update(riskData).eq('id', id);
+    const { error } = await supabase.from('risks').update(riskData).eq('id', id);
     if (error) throw error;
   } else {
-    const { error } = await sb.from('risks').insert([riskData]);
+    const { error } = await supabase.from('risks').insert([riskData]);
     if (error) throw error;
   }
 }
 
 export async function deleteRiskData(id: string) {
-  const { error } = await sb.from('risks').delete().eq('id', id);
+  const { error } = await supabase.from('risks').delete().eq('id', id);
   if (error) throw error;
 }
 
 export async function saveProcessData(department: string, name: string) {
-  const { data, error } = await sb
+  const { data, error } = await supabase
     .from('processes')
     .insert([{ department, process_name: name }])
     .select()
@@ -52,12 +51,7 @@ export async function saveProcessData(department: string, name: string) {
   return data as Process;
 }
 
-export async function renameProcessData(id: string, newName: string) {
-  const { error } = await sb.from('processes').update({ process_name: newName }).eq('id', id);
-  if (error) throw error;
-}
-
 export async function deleteProcessData(id: string) {
-  const { error } = await sb.from('processes').delete().eq('id', id);
+  const { error } = await supabase.from('processes').delete().eq('id', id);
   if (error) throw error;
 }
