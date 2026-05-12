@@ -1,14 +1,11 @@
-import { useEffect } from 'react';
-import { Book, HelpCircle } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import { useRCSA } from './hooks/useRCSA';
 import { DEPARTMENTS, ICONS } from './constants';
 import Login from './components/Login';
 import RiskForm from './components/RiskForm';
 import RiskTable from './components/RiskTable';
 import ProcessModal from './components/ProcessModal';
-import ReferenceGuide from './components/ReferenceGuide';
-import Tutorial from './components/Tutorial';
-import ExamplesDrawer from './components/ExamplesDrawer';
+import ContentDrawer from './components/ContentDrawer';
 
 export default function App() {
     const {
@@ -16,10 +13,8 @@ export default function App() {
         setDepartment,
         showModal,
         setShowModal,
-        showRef,
-        setShowRef,
-        showTutorial,
-        setShowTutorial,
+        activeDrawer,
+        setActiveDrawer,
         risks,
         processes,
         loading,
@@ -52,6 +47,14 @@ export default function App() {
         controlsLevel,
         residualLevel,
     } = useRCSA();
+
+    const [tutorialTargetSection, setTutorialTargetSection] = useState<number | null>(null);
+
+    // Clear tutorial section highlight when leaving tutorial mode
+    const handleDrawerChange = (drawer: 'tutorial' | 'reference' | 'examples' | null) => {
+        if (drawer !== 'tutorial') setTutorialTargetSection(null);
+        setActiveDrawer(drawer);
+    };
 
     useEffect(() => {
         if (!showModal || !department) return;
@@ -89,11 +92,9 @@ export default function App() {
                     </h1>
                 </div>
                 <div className="flex items-center gap-3">
-                    <button className="flex items-center gap-2 rounded-lg border border-blue-200 bg-blue-50 px-4 py-2 text-sm font-medium text-blue-700 transition-colors hover:bg-blue-100" onClick={() => setShowTutorial(true)}><HelpCircle size={16} /> How to Use</button>
-                    <button className="flex items-center gap-2 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-2 text-sm font-medium text-emerald-700 transition-colors hover:bg-emerald-100" onClick={() => setShowRef(true)}><Book size={16} /> Reference Guide</button>
                     <div className="flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-600">
                         {department}
-                        <button className="ml-1 flex items-center text-slate-400 hover:text-slate-600" onClick={() => setShowModal(true)} title="Change department" aria-label="Change department"><ICONS.x size={16} /></button>
+                        <button className="ml-1 flex items-center text-slate-400 hover:text-slate-600" onClick={() => { setShowModal(true); setActiveDrawer(null); }} title="Change department" aria-label="Change department"><ICONS.x size={16} /></button>
                     </div>
                     <button className="flex items-center rounded-lg border border-slate-200 bg-white p-2 text-slate-400 hover:bg-red-50 hover:text-red-600 hover:border-red-100 transition-all" onClick={handleLogout} title="Logout"><ICONS.logout size={16} /></button>
                 </div>
@@ -114,6 +115,7 @@ export default function App() {
                 handleSaveRisk={handleSaveRisk}
                 onClearForm={clearForm}
                 onOpenProcessModal={() => setShowProcessModal(true)}
+                tutorialTargetSection={tutorialTargetSection}
             />
 
             <RiskTable
@@ -168,9 +170,13 @@ export default function App() {
                 </div>
             )}
 
-            {showRef && <ReferenceGuide onClose={() => setShowRef(false)} />}
-            {showTutorial && <Tutorial onClose={() => setShowTutorial(false)} onOpenRef={() => { setShowTutorial(false); setShowRef(true); }} department={department} />}
-            <ExamplesDrawer department={department} isVisible={!showModal} />
+            <ContentDrawer
+                department={department}
+                isVisible={!showModal}
+                activeDrawer={activeDrawer}
+                onDrawerChange={handleDrawerChange}
+                onSectionChange={setTutorialTargetSection}
+            />
         </div>
     );
 }

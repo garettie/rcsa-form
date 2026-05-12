@@ -62,8 +62,7 @@ function getErrorMessage(e: unknown): string {
 export function useRCSA() {
     const [department, setDepartment] = useState(() => localStorage.getItem("rcsa_department") || "");
     const [showModal, setShowModal] = useState(() => !localStorage.getItem("rcsa_department"));
-    const [showRef, setShowRef] = useState(false);
-    const [showTutorial, setShowTutorial] = useState(false);
+    const [activeDrawer, setActiveDrawer] = useState<'tutorial' | 'reference' | 'examples' | null>(null);
     const [risks, setRisks] = useState<Risk[]>([]);
     const [processes, setProcesses] = useState<Process[]>([]);
     const [loading, setLoading] = useState(true);
@@ -114,9 +113,11 @@ export function useRCSA() {
         if (!authenticated || checkingAuth) return;
         if (department) {
             localStorage.setItem("rcsa_department", department);
-            loadData({ silent: true });
+            const id = setTimeout(() => loadData({ silent: true }), 0);
+            return () => clearTimeout(id);
         } else {
-            setLoading(false);
+            const id = setTimeout(() => setLoading(false), 0);
+            return () => clearTimeout(id);
         }
     }, [department, authenticated, checkingAuth, loadData]);
 
@@ -176,13 +177,13 @@ export function useRCSA() {
         return null;
     }, [form]);
 
-    const handleSaveRisk = useCallback(async () => {
+    const handleSaveRisk = useCallback(async (): Promise<boolean> => {
         const validation = validateForm();
         if (validation) {
             setError(validation.error);
             setErrorField(validation.field);
             window.scrollTo({ top: 0, behavior: 'smooth' });
-            return;
+            return false;
         }
         setSaving(true);
         setError(null);
@@ -200,12 +201,15 @@ export function useRCSA() {
             await loadData({ silent: true });
             setForm(getEmptyForm());
             setEditingId(null);
+            return true;
         } catch (e: unknown) {
 const message = getErrorMessage(e);
                 setError("Failed to save: " + message);
             window.scrollTo({ top: 0, behavior: 'smooth' });
+            return false;
+        } finally {
+            setSaving(false);
         }
-        setSaving(false);
     }, [validateForm, form, department, editingId, processes, loadData]);
 
     const handleDeleteRisk = useCallback(async (id: string) => {
@@ -224,6 +228,8 @@ const message = getErrorMessage(e);
         setViewOnly(false);
         setEditingId(risk.id);
         setForm(risk);
+        setError(null);
+        setErrorField(null);
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }, []);
 
@@ -231,6 +237,8 @@ const message = getErrorMessage(e);
         setViewOnly(true);
         setEditingId(risk.id);
         setForm(risk);
+        setError(null);
+        setErrorField(null);
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }, []);
 
@@ -278,6 +286,8 @@ const message = getErrorMessage(e);
         setEditingId(null);
         setViewOnly(false);
         setForm(getEmptyForm());
+        setError(null);
+        setErrorField(null);
     }, []);
 
     const inherentLevel = getRiskLevel(form.inherent_risk_score);
@@ -289,10 +299,8 @@ const message = getErrorMessage(e);
         setDepartment,
         showModal,
         setShowModal,
-        showRef,
-        setShowRef,
-        showTutorial,
-        setShowTutorial,
+        activeDrawer,
+        setActiveDrawer,
         risks,
         processes,
         loading,

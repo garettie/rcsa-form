@@ -64,30 +64,31 @@
   }
 
   .edit-overlay-bg {
-    @apply fixed inset-0 z-40 bg-slate-900/40 backdrop-blur-[2px] transition-opacity duration-300 pointer-events-none opacity-0;
+    @apply fixed inset-0 z-40 bg-slate-900/40 transition-opacity duration-300 pointer-events-none opacity-0;
   }
 
   .edit-overlay-bg.active {
     @apply opacity-100 pointer-events-auto;
   }
 
-  .examples-backdrop {
+  .drawer-backdrop {
     @apply opacity-0 transition-opacity duration-300;
   }
-  .examples-backdrop.open {
+  .drawer-backdrop.open {
     @apply opacity-100;
   }
-  .examples-drawer {
-    @apply translate-x-[calc(100%+2rem)] transition-transform duration-500;
-    transition-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1);
-  }
-  .examples-drawer.open {
-    @apply translate-x-0;
-  }
+}
 
-  .bouncy-transition {
-    transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
-  }
+.content-drawer {
+  transform: translateX(calc(100% + 2rem));
+  transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.content-drawer.open {
+  transform: translateX(0);
+}
+
+.bouncy-transition {
+  transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 .modal-overlay {
   @apply fixed inset-0 z-[1100] flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4;

@@ -10,7 +10,6 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@floating-ui/react": "^0.27.19",
     "@supabase/supabase-js": "^2.104.0",
     "lucide-react": "^1.8.0",
     "react": "^19.2.5",
