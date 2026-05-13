@@ -1,13 +1,19 @@
 import { useState, useEffect, useCallback } from 'react';
 import type { FormState, Risk, Process } from '../types';
 import { fetchProcesses, fetchRisks, saveRiskData, deleteRiskData, saveProcessData, deleteProcessData, supabase } from '../api';
-import { EVENT_TYPES } from '../constants';
 
 function getRiskLevel(score: number) {
+    if (score <= 0) return 0;
     if (score <= 3) return 1;
     if (score <= 6) return 2;
     if (score <= 9) return 3;
     return 4;
+}
+
+function getCurrentQuarterYear(): string {
+    const now = new Date();
+    const q = Math.floor(now.getMonth() / 3) + 1;
+    return `Q${q} ${now.getFullYear()}`;
 }
 
 function getEmptyForm(): FormState {
@@ -15,22 +21,22 @@ function getEmptyForm(): FormState {
         department: "",
         risk_description: "",
         possible_causes: "",
-        root_cause: "People",
-        event_type: EVENT_TYPES[0],
-        likelihood_score: 1,
-        impact_score: 1,
-        inherent_risk_score: 1,
+        root_cause: "",
+        event_type: "",
+        likelihood_score: 0,
+        impact_score: 0,
+        inherent_risk_score: 0,
         control_description: "",
         control_type: "",
-        control_design_score: 1,
-        control_implementation_score: 1,
-        controls_rating: 1,
-        residual_risk_score: 1,
-        risk_treatment: "Accept",
+        control_design_score: 0,
+        control_implementation_score: 0,
+        controls_rating: 0,
+        residual_risk_score: 0,
+        risk_treatment: "",
         action_plan: null,
         action_plan_deadline: null,
-        status: "Open",
-        assessment_period: "",
+        status: "",
+        assessment_period: getCurrentQuarterYear(),
         process_id: "",
         process_name: "",
     };
@@ -79,6 +85,9 @@ export function useRCSA() {
     const [form, setForm] = useState<FormState>(getEmptyForm());
     const [authenticated, setAuthenticated] = useState(false);
     const [checkingAuth, setCheckingAuth] = useState(true);
+    const [saveSuccess, setSaveSuccess] = useState(false);
+    const [cleanFormSnapshot, setCleanFormSnapshot] = useState<string>(JSON.stringify(getEmptyForm()));
+    const isDirty = JSON.stringify(form) !== cleanFormSnapshot;
 
     const loadData = useCallback(async (options: { silent?: boolean } = {}) => {
         if (!options.silent) setLoading(true);
@@ -120,6 +129,22 @@ export function useRCSA() {
             return () => clearTimeout(id);
         }
     }, [department, authenticated, checkingAuth, loadData]);
+
+    useEffect(() => {
+        if (!saveSuccess) return;
+        const id = setTimeout(() => setSaveSuccess(false), 3000);
+        return () => clearTimeout(id);
+    }, [saveSuccess]);
+
+    useEffect(() => {
+        if (!isDirty) return;
+        const handler = (e: BeforeUnloadEvent) => {
+            e.preventDefault();
+            e.returnValue = '';
+        };
+        window.addEventListener('beforeunload', handler);
+        return () => window.removeEventListener('beforeunload', handler);
+    }, [isDirty]);
 
     const confirm = useCallback((message: string): Promise<boolean> => {
         setConfirmMessage(message);
@@ -166,13 +191,23 @@ export function useRCSA() {
         if (!form.control_type) {
             return { error: "Please select a Control Type", field: "f-control_type" };
         }
-        if (form.risk_treatment === "Reduce") {
-            if (!(form.action_plan || "").trim()) {
-                return { error: "Action Plan is required when Risk Treatment is 'Reduce'", field: "f-action_plan" };
-            }
-            if (!form.action_plan_deadline) {
-                return { error: "Action Plan Deadline is required when Risk Treatment is 'Reduce'", field: "f-action_plan_deadline" };
-            }
+        if (form.likelihood_score < 1) {
+            return { error: "Please select a Likelihood Score", field: "f-likelihood_score" };
+        }
+        if (form.impact_score < 1) {
+            return { error: "Please select an Impact Score", field: "f-impact_score" };
+        }
+        if (form.control_design_score < 1) {
+            return { error: "Please select a Control Design score", field: "f-control_design_score" };
+        }
+        if (form.control_implementation_score < 1) {
+            return { error: "Please select a Control Implementation score", field: "f-control_implementation_score" };
+        }
+        if (!form.risk_treatment) {
+            return { error: "Please select a Risk Treatment", field: "f-risk_treatment" };
+        }
+        if (!form.status) {
+            return { error: "Please select a Status", field: "f-status" };
         }
         return null;
     }, [form]);
@@ -198,6 +233,8 @@ export function useRCSA() {
                 action_plan_deadline: form.action_plan_deadline || null
             };
             await saveRiskData(dataToSave, editingId);
+            setCleanFormSnapshot(JSON.stringify(getEmptyForm()));
+            setSaveSuccess(true);
             await loadData({ silent: true });
             setForm(getEmptyForm());
             setEditingId(null);
@@ -224,23 +261,33 @@ const message = getErrorMessage(e);
         }
     }, [confirm, loadData]);
 
-    const handleEditRisk = useCallback((risk: Risk) => {
+    const handleEditRisk = useCallback(async (risk: Risk) => {
+        if (isDirty && editingId) {
+            const ok = await confirm('You have unsaved changes. Discard them?');
+            if (!ok) return;
+        }
         setViewOnly(false);
         setEditingId(risk.id);
         setForm(risk);
+        setCleanFormSnapshot(JSON.stringify(risk));
         setError(null);
         setErrorField(null);
         window.scrollTo({ top: 0, behavior: 'smooth' });
-    }, []);
+    }, [editingId, confirm, isDirty]);
 
-    const handleViewRisk = useCallback((risk: Risk) => {
+    const handleViewRisk = useCallback(async (risk: Risk) => {
+        if (isDirty && editingId) {
+            const ok = await confirm('You have unsaved changes. Discard them?');
+            if (!ok) return;
+        }
         setViewOnly(true);
         setEditingId(risk.id);
         setForm(risk);
+        setCleanFormSnapshot(JSON.stringify(risk));
         setError(null);
         setErrorField(null);
         window.scrollTo({ top: 0, behavior: 'smooth' });
-    }, []);
+    }, [editingId, confirm, isDirty]);
 
     const handleAddProcess = useCallback(async (name: string) => {
         if (!name) return;
@@ -282,13 +329,19 @@ const message = getErrorMessage(e);
         setErrorField(null);
     }, []);
 
-    const clearForm = useCallback(() => {
+    const clearForm = useCallback(async () => {
+        if (isDirty && editingId) {
+            const ok = await confirm('You have unsaved changes. Discard them?');
+            if (!ok) return false;
+        }
         setEditingId(null);
         setViewOnly(false);
         setForm(getEmptyForm());
+        setCleanFormSnapshot(JSON.stringify(getEmptyForm()));
         setError(null);
         setErrorField(null);
-    }, []);
+        return true;
+    }, [editingId, confirm, isDirty]);
 
     const inherentLevel = getRiskLevel(form.inherent_risk_score);
     const controlsLevel = getRiskLevel(form.controls_rating);
@@ -323,6 +376,9 @@ const message = getErrorMessage(e);
         checkingAuth,
         handleLogin,
         handleLogout,
+        saveSuccess,
+        setSaveSuccess,
+        isDirty,
         handleSaveRisk,
         handleDeleteRisk,
         handleEditRisk,

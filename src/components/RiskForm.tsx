@@ -41,20 +41,20 @@ const FIELD_SECTION_MAP: Record<string, number> = {
 
 function SectionLabel({ label, isOpen, hasError }: { label: string; isOpen: boolean; hasError?: boolean }) {
     return (
-        <div className="flex w-full items-center justify-between border-l-2 border-teal-500 pl-3 text-left">
+        <div className="flex w-full items-center justify-between text-left">
             <span className="text-[11px] font-bold uppercase tracking-[0.15em] text-slate-700 flex items-center gap-2">
                 {label}
                 {hasError && <span className="h-2 w-2 rounded-full bg-red-500 shadow-[0_0_0_2px_rgba(239,68,68,0.2)] animate-pulse" title="Contains error" />}
             </span>
             <ICONS.chevronDown
                 size={14}
-                className={`text-slate-400 transition-transform duration-300 ease-out ${isOpen ? 'rotate-180' : ''}`}
+                className={`text-slate-400 transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${isOpen ? 'rotate-180' : ''}`}
             />
         </div>
     );
 }
 
-function InherentScoreDisplay({
+function ScoreDisplay({
     value,
     level,
     label,
@@ -65,9 +65,16 @@ function InherentScoreDisplay({
     label: string;
     id?: string;
 }) {
+    if (value === 0 || level === 0) {
+        return (
+            <div id={id} className="flex min-h-[46px] items-center gap-3 rounded-md border border-slate-200 bg-slate-100/80 px-4 py-2.5">
+                <span className="text-2xl font-bold text-slate-300">—</span>
+            </div>
+        );
+    }
     const color = RISK_COLORS[level as keyof typeof RISK_COLORS];
     return (
-        <div id={id} className="flex min-h-[46px] items-center gap-3 rounded-md bg-slate-100/80 px-4 py-2.5">
+        <div id={id} className="flex min-h-[46px] items-center gap-3 rounded-md border border-slate-200 bg-slate-100/80 px-4 py-2.5">
             <span className="text-2xl font-bold" style={{ color }}>{value}</span>
             <span
                 className="rounded px-2 py-0.5 text-[11px] font-bold uppercase tracking-wider"
@@ -102,9 +109,8 @@ function QuarterYearSelector({ value, onChange, onBlur, disabled, hasError }: Qu
     return (
         <div
             id="f-assessment_period"
-            className={`inline-flex items-center gap-2 rounded-md border bg-slate-50 px-3 py-2 transition-all ${
-                hasError ? 'border-red-500 ring-2 ring-red-100' : 'border-slate-200'
-            }`}
+            className={`flex w-full items-center gap-2 rounded-md border bg-slate-50 px-3 py-2 transition-all ${hasError ? 'border-red-500 ring-2 ring-red-100' : 'border-slate-200'
+                }`}
             onBlur={onBlur}
             tabIndex={-1}
         >
@@ -115,11 +121,10 @@ function QuarterYearSelector({ value, onChange, onBlur, disabled, hasError }: Qu
                         type="button"
                         disabled={disabled}
                         onClick={() => onChange(`${q} ${year}`)}
-                        className={`min-w-[36px] rounded-md px-2 py-1 text-xs font-bold transition-all ${
-                            quarter === q
-                                ? 'bg-slate-800 text-white shadow-sm'
+                        className={`min-w-[36px] rounded-md px-2 py-1 text-xs font-bold transition-all ${quarter === q
+                                ? 'bg-slate-900 text-white shadow-sm'
                                 : 'text-slate-500 hover:bg-slate-100'
-                        }`}
+                            }`}
                     >
                         {q}
                     </button>
@@ -170,6 +175,11 @@ export default function RiskForm({
 }: RiskFormProps) {
     const [openSection, setOpenSection] = useState(-1);
     const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+    const [prevEditingId, setPrevEditingId] = useState(editingId);
+    if (prevEditingId !== editingId) {
+        setPrevEditingId(editingId);
+        setFieldErrors({});
+    }
     const uid = useId();
 
     function validateField(field: string): string | null {
@@ -180,18 +190,32 @@ export default function RiskForm({
                 return form.process_id ? null : 'Please select a process.';
             case 'f-risk_description':
                 return (form.risk_description || '').trim() ? null : 'Risk description is required.';
+            case 'f-possible_causes':
+                return (form.possible_causes || '').trim() ? null : 'Possible causes is required.';
+            case 'f-root_cause':
+                return form.root_cause ? null : 'Please select a root cause.';
+            case 'f-event_type':
+                return form.event_type ? null : 'Please select an event type.';
+            case 'f-likelihood_score':
+                return form.likelihood_score >= 1 ? null : 'Please select a likelihood score.';
+            case 'f-impact_score':
+                return form.impact_score >= 1 ? null : 'Please select an impact score.';
             case 'f-control_description':
                 return (form.control_description || '').trim() ? null : 'Control description is required.';
             case 'f-control_type':
                 return form.control_type ? null : 'Please select a control type.';
+            case 'f-control_design_score':
+                return form.control_design_score >= 1 ? null : 'Please select a control design score.';
+            case 'f-control_implementation_score':
+                return form.control_implementation_score >= 1 ? null : 'Please select a control implementation score.';
             case 'f-action_plan':
-                return form.risk_treatment === 'Reduce' && !(form.action_plan || '').trim()
-                    ? 'Action plan is required when treatment is Reduce.'
-                    : null;
+                return null;
             case 'f-action_plan_deadline':
-                return form.risk_treatment === 'Reduce' && !form.action_plan_deadline
-                    ? 'Deadline is required when treatment is Reduce.'
-                    : null;
+                return null;
+            case 'f-risk_treatment':
+                return form.risk_treatment ? null : 'Please select a risk treatment.';
+            case 'f-status':
+                return form.status ? null : 'Please select a status.';
             default:
                 return null;
         }
@@ -234,10 +258,6 @@ export default function RiskForm({
     }, [errorField]);
 
     useEffect(() => {
-        setFieldErrors({});
-    }, [editingId]);
-
-    useEffect(() => {
         if (tutorialTargetSection !== undefined && tutorialTargetSection !== null) {
             const timer = setTimeout(() => {
                 setOpenSection(tutorialTargetSection);
@@ -252,21 +272,21 @@ export default function RiskForm({
 
     function getSectionState(idx: number): 'empty' | 'partial' | 'complete' {
         if (idx === 0) {
-            const hasAny = !!(form.assessment_period || form.process_id || form.risk_description || form.possible_causes);
+            const hasAny = !!(form.assessment_period || form.process_id || form.risk_description || form.possible_causes || form.root_cause || form.event_type);
             const isComplete = !!(form.process_id && form.risk_description);
             return isComplete ? 'complete' : hasAny ? 'partial' : 'empty';
         }
         if (idx === 1) {
-            return (form.likelihood_score > 1 || form.impact_score > 1) ? 'complete' : 'empty';
+            return (form.likelihood_score >= 1 && form.impact_score >= 1) ? 'complete' : 'empty';
         }
         if (idx === 2) {
-            const hasAny = !!(form.control_description || form.control_type);
+            const hasAny = !!(form.control_description || form.control_type || form.control_design_score >= 1 || form.control_implementation_score >= 1);
             const isComplete = !!(form.control_description && form.control_type);
             return isComplete ? 'complete' : hasAny ? 'partial' : 'empty';
         }
         if (idx === 3) {
-            const hasAny = form.risk_treatment !== 'Accept' || !!form.action_plan || form.status !== 'Open';
-            const isComplete = form.risk_treatment !== 'Accept' || !!form.action_plan;
+            const hasAny = !!(form.risk_treatment || form.action_plan || form.status);
+            const isComplete = !!form.risk_treatment;
             return isComplete ? 'complete' : hasAny ? 'partial' : 'empty';
         }
         return 'empty';
@@ -276,36 +296,31 @@ export default function RiskForm({
         const isCurrent = openSection === sectionIndex;
         const state = getSectionState(sectionIndex);
         const isCompleted = state === 'complete';
-        
-        let circleClass = 'bg-slate-100 text-slate-500 border border-slate-200';
+
+        let circleClass = 'bg-slate-100 text-slate-500 border-2 border-slate-200';
         let content: React.ReactNode = sectionIndex + 1;
 
         if (isCompleted) {
-            circleClass = 'bg-emerald-500 text-white';
+            circleClass = 'bg-emerald-500 text-white border-2 border-emerald-600';
             content = <ICONS.check size={13} />;
         } else if (isCurrent) {
-            circleClass = 'bg-slate-800 text-white';
+            circleClass = 'bg-white text-slate-700 border-2 border-teal-500';
         } else if (state === 'partial') {
-            circleClass = 'bg-slate-50 text-slate-500 border border-dashed border-slate-300';
+            circleClass = 'bg-slate-50 text-slate-400 border-2 border-dashed border-slate-300';
         }
 
         return (
-            <div className={`flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full text-[11px] font-bold transition-all duration-300 ease-out box-border ${circleClass}`}>
+            <div className={`flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full text-[11px] font-bold transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] box-border ${circleClass}`}>
                 {content}
             </div>
         );
     }
 
     return (
-        <div className={`mb-10 rounded-2xl border border-slate-200 bg-white p-10 shadow-sm transition-all duration-300 ${editingId ? 'editing-active' : ''}`}>
+        <div className={`mb-10 rounded-2xl border border-slate-200 bg-white p-8 shadow-sm transition-all duration-300 ${editingId ? 'editing-active' : ''}`}>
             <div className="mb-6 flex items-center justify-between border-b border-slate-100 pb-6">
                 <div className="flex items-center gap-4">
                     <h2 className="m-0 text-xl font-bold text-slate-800">{viewOnly ? "View Risk Entry" : (editingId ? "Edit Risk Entry" : "New Risk Entry")}</h2>
-                    {!viewOnly && openSection >= 0 && (
-                        <span className="text-[11px] font-semibold text-slate-400">
-                            Section {openSection + 1} of {SECTIONS.length}
-                        </span>
-                    )}
                 </div>
                 {editingId && <button className="flex items-center gap-2 rounded-lg bg-slate-100 px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-200 transition-all" onClick={onClearForm}><ICONS.x size={16} /> Close</button>}
             </div>
@@ -313,34 +328,40 @@ export default function RiskForm({
             {error && <div className="mb-8 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700 shadow-sm">{error}</div>}
 
             {/* Persistent context strip — shows risk description when section 1 is collapsed */}
-            {openSection !== 0 && form.risk_description && (
-                <div className="mb-4 flex items-center gap-3 rounded-lg border border-slate-100 bg-slate-50/80 px-4 py-2.5">
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 flex-shrink-0">Risk</span>
-                    <p className="flex-1 truncate text-sm text-slate-600" title={form.risk_description}>
-                        {form.risk_description}
-                    </p>
-                    {form.likelihood_score > 0 && (
-                        <button
-                            onClick={() => {
-                                setOpenSection(1);
-                                setTimeout(() => document.getElementById('cf-inherent-score')?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 300);
-                            }}
-                            className="flex items-center gap-1.5 rounded-md px-2 py-1 text-[11px] font-bold uppercase tracking-wider transition-all hover:opacity-80 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-400 flex-shrink-0 cursor-pointer"
-                            style={{ background: `${RISK_COLORS[inherentLevel as keyof typeof RISK_COLORS]}18`, color: RISK_COLORS[inherentLevel as keyof typeof RISK_COLORS] }}
-                            title="Click to view risk assessment"
-                            aria-label="View inherent risk score"
-                        >
-                            {form.inherent_risk_score} - {RESIDUAL_RISK_LABELS[inherentLevel as keyof typeof RESIDUAL_RISK_LABELS]}
-                        </button>
-                    )}
+            {form.risk_description && (
+                <div
+                    className={`overflow-hidden transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+                        openSection !== 0 ? 'max-h-20 opacity-100 mb-4' : 'max-h-0 opacity-0 mb-0'
+                    }`}
+                >
+                    <div className="flex items-center gap-3 rounded-lg border border-slate-200 bg-slate-50/80 px-4 py-2.5">
+                        <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 flex-shrink-0">Risk</span>
+                        <p className="flex-1 truncate text-sm text-slate-600" title={form.risk_description}>
+                            {form.risk_description}
+                        </p>
+                        {form.inherent_risk_score > 0 && (
+                            <button
+                                onClick={() => {
+                                    setOpenSection(1);
+                                    setTimeout(() => document.getElementById('cf-inherent-score')?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 300);
+                                }}
+                                className="flex items-center gap-1.5 rounded-md px-2 py-1 text-[11px] font-bold uppercase tracking-wider transition-all hover:opacity-80 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-400 flex-shrink-0 cursor-pointer"
+                                style={{ background: `${RISK_COLORS[inherentLevel as keyof typeof RISK_COLORS]}18`, color: RISK_COLORS[inherentLevel as keyof typeof RISK_COLORS] }}
+                                title="Click to view risk assessment"
+                                aria-label="View inherent risk score"
+                            >
+                                {form.inherent_risk_score} - {RESIDUAL_RISK_LABELS[inherentLevel as keyof typeof RESIDUAL_RISK_LABELS]}
+                            </button>
+                        )}
+                    </div>
                 </div>
             )}
 
             <div className="space-y-3">
                 {SECTIONS.map((section, idx) => (
-                    <div key={section.id} className="rounded-lg border border-slate-200 overflow-hidden transition-colors duration-300">
+                    <div key={section.id} className="rounded-lg border border-slate-200 overflow-hidden transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]">
                         <div
-                            className={`flex cursor-pointer items-center px-6 py-4 transition-colors duration-200 ${openSection === idx ? 'bg-white' : 'bg-slate-50 hover:bg-slate-100'}`}
+                            className={`flex cursor-pointer items-center px-6 py-4 transition-colors duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] ${openSection === idx ? 'bg-white border-b border-slate-100' : 'bg-slate-50 hover:bg-slate-100'}`}
                             onClick={() => setOpenSection(openSection === idx ? -1 : idx)}
                             role="button"
                             tabIndex={0}
@@ -351,197 +372,239 @@ export default function RiskForm({
                             <div className="mr-4">
                                 {stepCircle(idx)}
                             </div>
-                            <SectionLabel 
-                                label={section.label} 
-                                isOpen={openSection === idx} 
-                                hasError={errorField ? FIELD_SECTION_MAP[errorField] === idx : false} 
+                            <SectionLabel
+                                label={section.label}
+                                isOpen={openSection === idx}
+                                hasError={errorField ? FIELD_SECTION_MAP[errorField] === idx : false}
                             />
                         </div>
 
                         <div
                             id={`${uid}-section-${idx}`}
-                            className="overflow-hidden transition-all duration-300 ease-in-out"
+                            className="overflow-hidden transition-all duration-[400ms] ease-[cubic-bezier(0.4,0,0.2,1)]"
                             style={{ maxHeight: openSection === idx ? '1200px' : '0' }}
                         >
-                                {idx === 0 && (
-                                    <div className="grid grid-cols-1 gap-x-10 gap-y-6 px-6 pb-6 md:grid-cols-3">
-                                        <div>
-                                            <label>Assessment Period</label>
-                                            <QuarterYearSelector
-                                                value={form.assessment_period}
-                                                onChange={v => handleFieldChange('assessment_period', v)}
-                                                onBlur={() => handleBlur('f-assessment_period')}
-                                                disabled={viewOnly}
-                                                hasError={!!(errorField === 'f-assessment_period' || fieldErrors['f-assessment_period'])}
-                                            />
-                                            {fieldErrors['f-assessment_period'] && (
-                                                <p className="mt-1 text-xs text-red-500">{fieldErrors['f-assessment_period']}</p>
-                                            )}
-                                        </div>
-                                        <div className="md:col-span-2">
-                                            <label>Process *</label>
-                                            <div className="flex gap-3">
-                                                {processes.length === 0 ? (
-                                                    <div id="f-process_id-empty" className="flex-1 rounded-lg border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm italic text-slate-400">No processes yet. Add one using Edit Processes</div>
-                                                ) : (
-                                                    <select id="f-process_id" value={form.process_id} onChange={e => { handleFieldChange('process_id', e.target.value); }} onBlur={() => handleBlur('f-process_id')} className={`select-custom ${!form.process_id ? 'text-slate-400' : ''} ${(errorField === 'f-process_id' || fieldErrors['f-process_id']) ? 'border-red-500 ring-2 ring-red-100' : ''}`} disabled={viewOnly}>
-                                                        <option value="" disabled>Select process...</option>
-                                                        {processes.map(p => <option key={p.id} value={p.id} className="text-slate-700">{p.process_name}</option>)}
-                                                    </select>
-                                                )}
-                                                {!viewOnly && <button id="edit-processes-btn" className="flex items-center gap-2 whitespace-nowrap rounded-md bg-slate-100 px-5 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-200 transition-colors" onClick={onOpenProcessModal}><ICONS.edit size={12} /> Edit</button>}
-                                            </div>
-                                            {fieldErrors['f-process_id'] && (
-                                                <p className="mt-1 text-xs text-red-500">{fieldErrors['f-process_id']}</p>
-                                            )}
-                                        </div>
-                                        <div className="md:col-span-3">
-                                            <label>Risk Description *</label>
-                                            <textarea id="f-risk_description" rows={3} value={form.risk_description} onChange={e => { handleFieldChange('risk_description', e.target.value); }} onBlur={() => handleBlur('f-risk_description')} placeholder="Describe the risk..." required className={(errorField === 'f-risk_description' || fieldErrors['f-risk_description']) ? 'border-red-500 ring-2 ring-red-100' : ''} disabled={viewOnly}></textarea>
-                                            {fieldErrors['f-risk_description'] && (
-                                                <p className="mt-1 text-xs text-red-500">{fieldErrors['f-risk_description']}</p>
-                                            )}
-                                        </div>
-                                        <div className="md:col-span-3">
-                                            <label>Possible Causes</label>
-                                            <textarea id="f-possible_causes" rows={3} value={form.possible_causes} onChange={e => { updateForm('possible_causes', e.target.value); }} placeholder="Describe possible causes..." className={errorField === 'f-possible_causes' ? 'border-red-500 ring-2 ring-red-100' : ''} disabled={viewOnly}></textarea>
-                                        </div>
-                                        <div>
-                                            <label>Root Cause</label>
-                                            <select id="f-root_cause" value={form.root_cause} onChange={e => { updateForm('root_cause', e.target.value); }} className={`select-custom ${errorField === 'f-root_cause' ? 'border-red-500 ring-2 ring-red-100' : ''}`} disabled={viewOnly}>
-                                                {ROOT_CAUSES.map(rc => <option key={rc} value={rc}>{rc}</option>)}
-                                            </select>
-                                        </div>
-                                        <div className="md:col-span-2">
-                                            <label>Event Type</label>
-                                            <select id="f-event_type" value={form.event_type} onChange={e => { updateForm('event_type', e.target.value); }} className={`select-custom ${errorField === 'f-event_type' ? 'border-red-500 ring-2 ring-red-100' : ''}`} disabled={viewOnly}>
-                                                {EVENT_TYPES.map(et => <option key={et} value={et}>{et}</option>)}
-                                            </select>
-                                        </div>
+                            {idx === 0 && (
+                                <div className="grid grid-cols-1 gap-x-8 gap-y-6 px-6 pb-6 pt-6 md:grid-cols-3">
+                                    <div>
+                                        <label htmlFor="f-assessment_period">Assessment Period *</label>
+                                        <QuarterYearSelector
+                                            value={form.assessment_period}
+                                            onChange={v => handleFieldChange('assessment_period', v)}
+                                            onBlur={() => handleBlur('f-assessment_period')}
+                                            disabled={viewOnly}
+                                            hasError={!!(errorField === 'f-assessment_period' || fieldErrors['f-assessment_period'])}
+                                        />
+                                        {fieldErrors['f-assessment_period'] && (
+                                            <p className="mt-1 text-xs text-red-500">{fieldErrors['f-assessment_period']}</p>
+                                        )}
                                     </div>
-                                )}
+                                    <div className="md:col-span-2">
+                                        <label htmlFor="f-process_id">Process *</label>
+                                        <div className="flex gap-3">
+                                            {processes.length === 0 ? (
+                                                <div id="f-process_id-empty" className="flex-1 rounded-lg border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm italic text-slate-400">No processes yet. Add one using Edit Processes</div>
+                                            ) : (
+                                                <select id="f-process_id" value={form.process_id} onChange={e => { handleFieldChange('process_id', e.target.value); }} onBlur={() => handleBlur('f-process_id')} className={`select-custom ${!form.process_id ? 'text-slate-400' : ''} ${(errorField === 'f-process_id' || fieldErrors['f-process_id']) ? 'border-red-500 ring-2 ring-red-100' : ''}`} disabled={viewOnly}>
+                                                    <option value="" disabled>Select process...</option>
+                                                    {processes.map(p => <option key={p.id} value={p.id} className="text-slate-700">{p.process_name}</option>)}
+                                                </select>
+                                            )}
+                                            {!viewOnly && <button id="edit-processes-btn" className="flex items-center gap-2 whitespace-nowrap rounded-md bg-slate-100 px-5 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-200 transition-colors" onClick={onOpenProcessModal}><ICONS.edit size={12} /> Edit</button>}
+                                        </div>
+                                        {fieldErrors['f-process_id'] && (
+                                            <p className="mt-1 text-xs text-red-500">{fieldErrors['f-process_id']}</p>
+                                        )}
+                                    </div>
+                                    <div className="md:col-span-3">
+                                        <label htmlFor="f-risk_description">Risk Description *</label>
+                                        <textarea id="f-risk_description" rows={3} value={form.risk_description} onChange={e => { handleFieldChange('risk_description', e.target.value); }} onBlur={() => handleBlur('f-risk_description')} placeholder="Describe the risk..." required className={(errorField === 'f-risk_description' || fieldErrors['f-risk_description']) ? 'border-red-500 ring-2 ring-red-100' : ''} disabled={viewOnly}></textarea>
+                                        {fieldErrors['f-risk_description'] && (
+                                            <p className="mt-1 text-xs text-red-500">{fieldErrors['f-risk_description']}</p>
+                                        )}
+                                    </div>
+                                    <div className="md:col-span-3">
+                                        <label htmlFor="f-possible_causes">Possible Causes *</label>
+                                        <textarea id="f-possible_causes" rows={3} value={form.possible_causes} onChange={e => { handleFieldChange('possible_causes', e.target.value); }} onBlur={() => handleBlur('f-possible_causes')} placeholder="Describe possible causes..." className={(errorField === 'f-possible_causes' || fieldErrors['f-possible_causes']) ? 'border-red-500 ring-2 ring-red-100' : ''} disabled={viewOnly}></textarea>
+                                        {fieldErrors['f-possible_causes'] && (
+                                            <p className="mt-1 text-xs text-red-500">{fieldErrors['f-possible_causes']}</p>
+                                        )}
+                                    </div>
+                                    <div>
+                                        <label htmlFor="f-root_cause">Root Cause *</label>
+                                        <select id="f-root_cause" value={form.root_cause} onChange={e => { handleFieldChange('root_cause', e.target.value); }} onBlur={() => handleBlur('f-root_cause')} className={`select-custom ${(errorField === 'f-root_cause' || fieldErrors['f-root_cause']) ? 'border-red-500 ring-2 ring-red-100' : ''}`} disabled={viewOnly}>
+                                            <option value="" disabled>Select root cause...</option>
+                                            {ROOT_CAUSES.map(rc => <option key={rc} value={rc}>{rc}</option>)}
+                                        </select>
+                                        {fieldErrors['f-root_cause'] && (
+                                            <p className="mt-1 text-xs text-red-500">{fieldErrors['f-root_cause']}</p>
+                                        )}
+                                    </div>
+                                    <div className="md:col-span-2">
+                                        <label htmlFor="f-event_type">Event Type *</label>
+                                        <select id="f-event_type" value={form.event_type} onChange={e => { handleFieldChange('event_type', e.target.value); }} onBlur={() => handleBlur('f-event_type')} className={`select-custom ${(errorField === 'f-event_type' || fieldErrors['f-event_type']) ? 'border-red-500 ring-2 ring-red-100' : ''}`} disabled={viewOnly}>
+                                            <option value="" disabled>Select event type...</option>
+                                            {EVENT_TYPES.map(et => <option key={et} value={et}>{et}</option>)}
+                                        </select>
+                                        {fieldErrors['f-event_type'] && (
+                                            <p className="mt-1 text-xs text-red-500">{fieldErrors['f-event_type']}</p>
+                                        )}
+                                    </div>
+                                </div>
+                            )}
 
-                                {idx === 1 && (
-                                    <div className="grid grid-cols-1 gap-x-10 gap-y-6 px-6 pb-6 md:grid-cols-3">
-                                        <div>
-                                            <label>Likelihood Score</label>
-                                            <select id="f-likelihood_score" value={form.likelihood_score} onChange={e => updateForm('likelihood_score', Number(e.target.value))} className="select-custom" disabled={viewOnly}>
-                                                {[1, 2, 3, 4].map(n => <option key={n} value={n}>{n} - {LIKELIHOOD_LABELS[n as keyof typeof LIKELIHOOD_LABELS]}</option>)}
-                                            </select>
-                                        </div>
-                                        <div>
-                                            <label>Impact Score</label>
-                                            <select id="f-impact_score" value={form.impact_score} onChange={e => updateForm('impact_score', Number(e.target.value))} className="select-custom" disabled={viewOnly}>
-                                                {[1, 2, 3, 4].map(n => <option key={n} value={n}>{n} - {IMPACT_LABELS[n as keyof typeof IMPACT_LABELS]}</option>)}
-                                            </select>
-                                        </div>
-                                        <div>
-                                            <label>Inherent Risk Score</label>
-                                            <InherentScoreDisplay id="cf-inherent-score"
-                                                value={form.inherent_risk_score}
-                                                level={inherentLevel}
-                                                label={RESIDUAL_RISK_LABELS[inherentLevel as keyof typeof RESIDUAL_RISK_LABELS]}
-                                            />
-                                        </div>
+                            {idx === 1 && (
+                                <div className="grid grid-cols-1 gap-x-8 gap-y-6 px-6 pb-6 pt-6 md:grid-cols-3">
+                                    <div>
+                                        <label htmlFor="f-likelihood_score">Likelihood Score *</label>
+                                        <select id="f-likelihood_score" value={form.likelihood_score} onChange={e => updateForm('likelihood_score', Number(e.target.value))} onBlur={() => handleBlur('f-likelihood_score')} className={`select-custom ${(errorField === 'f-likelihood_score' || fieldErrors['f-likelihood_score']) ? 'border-red-500 ring-2 ring-red-100' : ''}`} disabled={viewOnly} style={form.likelihood_score >= 1 ? { borderColor: RISK_COLORS[form.likelihood_score as keyof typeof RISK_COLORS], borderWidth: '1.5px' } : {}}>
+                                            <option value={0} disabled>Select likelihood...</option>
+                                            {[1, 2, 3, 4].map(n => <option key={n} value={n}>{n} - {LIKELIHOOD_LABELS[n as keyof typeof LIKELIHOOD_LABELS]}</option>)}
+                                        </select>
+                                        {fieldErrors['f-likelihood_score'] && (
+                                            <p className="mt-1 text-xs text-red-500">{fieldErrors['f-likelihood_score']}</p>
+                                        )}
                                     </div>
-                                )}
+                                    <div>
+                                        <label htmlFor="f-impact_score">Impact Score *</label>
+                                        <select id="f-impact_score" value={form.impact_score} onChange={e => updateForm('impact_score', Number(e.target.value))} onBlur={() => handleBlur('f-impact_score')} className={`select-custom ${(errorField === 'f-impact_score' || fieldErrors['f-impact_score']) ? 'border-red-500 ring-2 ring-red-100' : ''}`} disabled={viewOnly} style={form.impact_score >= 1 ? { borderColor: RISK_COLORS[form.impact_score as keyof typeof RISK_COLORS], borderWidth: '1.5px' } : {}}>
+                                            <option value={0} disabled>Select impact...</option>
+                                            {[1, 2, 3, 4].map(n => <option key={n} value={n}>{n} - {IMPACT_LABELS[n as keyof typeof IMPACT_LABELS]}</option>)}
+                                        </select>
+                                        {fieldErrors['f-impact_score'] && (
+                                            <p className="mt-1 text-xs text-red-500">{fieldErrors['f-impact_score']}</p>
+                                        )}
+                                    </div>
+                                    <div>
+                                        <label htmlFor="cf-inherent-score">Inherent Risk Score</label>
+                                        <ScoreDisplay id="cf-inherent-score"
+                                            value={form.inherent_risk_score}
+                                            level={inherentLevel}
+                                            label={RESIDUAL_RISK_LABELS[inherentLevel as keyof typeof RESIDUAL_RISK_LABELS]}
+                                        />
+                                    </div>
+                                </div>
+                            )}
 
-                                {idx === 2 && (
-                                    <div className="grid grid-cols-1 gap-x-10 gap-y-6 px-6 pb-6 md:grid-cols-3">
-                                        <div className="md:col-span-3">
-                                            <label>Control Description</label>
-                                            <textarea id="f-control_description" rows={3} value={form.control_description} onChange={e => { handleFieldChange('control_description', e.target.value); }} onBlur={() => handleBlur('f-control_description')} placeholder="Describe the controls in place..." className={(errorField === 'f-control_description' || fieldErrors['f-control_description']) ? 'border-red-500 ring-2 ring-red-100' : ''} disabled={viewOnly}></textarea>
-                                            {fieldErrors['f-control_description'] && (
-                                                <p className="mt-1 text-xs text-red-500">{fieldErrors['f-control_description']}</p>
-                                            )}
-                                        </div>
-                                        <div>
-                                            <label>Control Type</label>
-                                            <select id="f-control_type" value={form.control_type} onChange={e => { handleFieldChange('control_type', e.target.value); }} onBlur={() => handleBlur('f-control_type')} className={`select-custom ${!form.control_type ? 'text-slate-400' : ''} ${(errorField === 'f-control_type' || fieldErrors['f-control_type']) ? 'border-red-500 ring-2 ring-red-100' : ''}`} disabled={viewOnly}>
-                                                <option value="" disabled>Select Control Type...</option>
-                                                {CONTROL_TYPES.map(ct => <option key={ct} value={ct} className="text-slate-700">{ct}</option>)}
-                                            </select>
-                                            {fieldErrors['f-control_type'] && (
-                                                <p className="mt-1 text-xs text-red-500">{fieldErrors['f-control_type']}</p>
-                                            )}
-                                        </div>
-                                        <div>
-                                            <label>Control Design</label>
-                                            <select id="f-control_design_score" value={form.control_design_score} onChange={e => updateForm('control_design_score', Number(e.target.value))} className="select-custom" disabled={viewOnly}>
-                                                {[1, 2, 3, 4].map(n => <option key={n} value={n}>{n} - {CONTROL_DESIGN_LABELS[n as keyof typeof CONTROL_DESIGN_LABELS]}</option>)}
-                                            </select>
-                                        </div>
-                                        <div>
-                                            <label>Control Implementation</label>
-                                            <select id="f-control_implementation_score" value={form.control_implementation_score} onChange={e => updateForm('control_implementation_score', Number(e.target.value))} className="select-custom" disabled={viewOnly}>
-                                                {[1, 2, 3, 4].map(n => <option key={n} value={n}>{n} - {CONTROL_IMPL_LABELS[n as keyof typeof CONTROL_IMPL_LABELS]}</option>)}
-                                            </select>
-                                        </div>
-                                        <div>
-                                            <label>Controls Rating</label>
-                                            <InherentScoreDisplay id="cf-controls-rating"
-                                                value={form.controls_rating}
-                                                level={controlsLevel}
-                                                label={CONTROLS_RATING_LABELS[controlsLevel as keyof typeof CONTROLS_RATING_LABELS]}
-                                            />
-                                        </div>
-                                        <div className="md:col-span-2">
-                                            <label>Residual Risk Score</label>
-                                            <div className="flex min-h-[46px] items-center gap-3 rounded-md bg-slate-100/80 px-4 py-2.5" id="cf-residual">
-                                                <span className="text-2xl font-bold" style={{ color: RISK_COLORS[residualLevel as keyof typeof RISK_COLORS] }}>{form.residual_risk_score}</span>
-                                                <span className="rounded px-2 py-0.5 text-[11px] font-bold uppercase tracking-wider" style={{ background: `${RISK_COLORS[residualLevel as keyof typeof RISK_COLORS]}18`, color: RISK_COLORS[residualLevel as keyof typeof RISK_COLORS] }}>{RESIDUAL_RISK_LABELS[residualLevel as keyof typeof RESIDUAL_RISK_LABELS]}</span>
-                                            </div>
-                                        </div>
+                            {idx === 2 && (
+                                <div className="grid grid-cols-1 gap-x-8 gap-y-6 px-6 pb-6 pt-6 md:grid-cols-3">
+                                    <div className="md:col-span-3">
+                                        <label htmlFor="f-control_description">Control Description *</label>
+                                        <textarea id="f-control_description" rows={3} value={form.control_description} onChange={e => { handleFieldChange('control_description', e.target.value); }} onBlur={() => handleBlur('f-control_description')} placeholder="Describe the controls in place..." className={(errorField === 'f-control_description' || fieldErrors['f-control_description']) ? 'border-red-500 ring-2 ring-red-100' : ''} disabled={viewOnly}></textarea>
+                                        {fieldErrors['f-control_description'] && (
+                                            <p className="mt-1 text-xs text-red-500">{fieldErrors['f-control_description']}</p>
+                                        )}
                                     </div>
-                                )}
+                                    <div>
+                                        <label htmlFor="f-control_type">Control Type *</label>
+                                        <select id="f-control_type" value={form.control_type} onChange={e => { handleFieldChange('control_type', e.target.value); }} onBlur={() => handleBlur('f-control_type')} className={`select-custom ${!form.control_type ? 'text-slate-400' : ''} ${(errorField === 'f-control_type' || fieldErrors['f-control_type']) ? 'border-red-500 ring-2 ring-red-100' : ''}`} disabled={viewOnly}>
+                                            <option value="" disabled>Select control type...</option>
+                                            {CONTROL_TYPES.map(ct => <option key={ct} value={ct} className="text-slate-700">{ct}</option>)}
+                                        </select>
+                                        {fieldErrors['f-control_type'] && (
+                                            <p className="mt-1 text-xs text-red-500">{fieldErrors['f-control_type']}</p>
+                                        )}
+                                    </div>
+                                    <div>
+                                        <label htmlFor="f-control_design_score">Control Design *</label>
+                                        <select id="f-control_design_score" value={form.control_design_score} onChange={e => updateForm('control_design_score', Number(e.target.value))} onBlur={() => handleBlur('f-control_design_score')} className={`select-custom ${(errorField === 'f-control_design_score' || fieldErrors['f-control_design_score']) ? 'border-red-500 ring-2 ring-red-100' : ''}`} disabled={viewOnly} style={form.control_design_score >= 1 ? { borderColor: RISK_COLORS[form.control_design_score as keyof typeof RISK_COLORS], borderWidth: '1.5px' } : {}}>
+                                            <option value={0} disabled>Select design...</option>
+                                            {[1, 2, 3, 4].map(n => <option key={n} value={n}>{n} - {CONTROL_DESIGN_LABELS[n as keyof typeof CONTROL_DESIGN_LABELS]}</option>)}
+                                        </select>
+                                        {fieldErrors['f-control_design_score'] && (
+                                            <p className="mt-1 text-xs text-red-500">{fieldErrors['f-control_design_score']}</p>
+                                        )}
+                                    </div>
+                                    <div>
+                                        <label htmlFor="f-control_implementation_score">Control Implementation *</label>
+                                        <select id="f-control_implementation_score" value={form.control_implementation_score} onChange={e => updateForm('control_implementation_score', Number(e.target.value))} onBlur={() => handleBlur('f-control_implementation_score')} className={`select-custom ${(errorField === 'f-control_implementation_score' || fieldErrors['f-control_implementation_score']) ? 'border-red-500 ring-2 ring-red-100' : ''}`} disabled={viewOnly} style={form.control_implementation_score >= 1 ? { borderColor: RISK_COLORS[form.control_implementation_score as keyof typeof RISK_COLORS], borderWidth: '1.5px' } : {}}>
+                                            <option value={0} disabled>Select implementation...</option>
+                                            {[1, 2, 3, 4].map(n => <option key={n} value={n}>{n} - {CONTROL_IMPL_LABELS[n as keyof typeof CONTROL_IMPL_LABELS]}</option>)}
+                                        </select>
+                                        {fieldErrors['f-control_implementation_score'] && (
+                                            <p className="mt-1 text-xs text-red-500">{fieldErrors['f-control_implementation_score']}</p>
+                                        )}
+                                    </div>
+                                    <div>
+                                        <label htmlFor="cf-controls-rating">Controls Rating</label>
+                                        <ScoreDisplay id="cf-controls-rating"
+                                            value={form.controls_rating}
+                                            level={controlsLevel}
+                                            label={CONTROLS_RATING_LABELS[controlsLevel as keyof typeof CONTROLS_RATING_LABELS]}
+                                        />
+                                    </div>
+                                    <div className="md:col-span-2">
+                                        <label htmlFor="cf-residual">Residual Risk Score</label>
+                                        <ScoreDisplay id="cf-residual"
+                                            value={form.residual_risk_score}
+                                            level={residualLevel}
+                                            label={RESIDUAL_RISK_LABELS[residualLevel as keyof typeof RESIDUAL_RISK_LABELS]}
+                                        />
+                                    </div>
+                                </div>
+                            )}
 
-                                {idx === 3 && (
-                                    <div className="grid grid-cols-1 gap-x-10 gap-y-6 px-6 pb-6 md:grid-cols-3">
-                                        <div>
-                                            <label>Risk Treatment</label>
-                                            <select id="f-risk_treatment" value={form.risk_treatment} onChange={e => {
-                                                handleFieldChange('risk_treatment', e.target.value);
-                                                setFieldErrors(prev => {
-                                                    const copy = { ...prev };
-                                                    delete copy['f-action_plan'];
-                                                    delete copy['f-action_plan_deadline'];
-                                                    return copy;
-                                                });
-                                            }} className="select-custom" disabled={viewOnly}>
-                                                {RISK_TREATMENTS.map(rt => <option key={rt} value={rt}>{rt}</option>)}
-                                            </select>
-                                        </div>
-                                        <div className="md:col-span-2">
-                                            <label>Action Plan</label>
-                                            <input id="f-action_plan" type="text" value={form.action_plan ?? ""} onChange={e => { handleFieldChange('action_plan', e.target.value); }} onBlur={() => handleBlur('f-action_plan')} placeholder="What actions will be taken?" className={(errorField === 'f-action_plan' || fieldErrors['f-action_plan']) ? 'border-red-500 ring-2 ring-red-100' : ''} disabled={viewOnly} />
-                                            {fieldErrors['f-action_plan'] && (
-                                                <p className="mt-1 text-xs text-red-500">{fieldErrors['f-action_plan']}</p>
-                                            )}
-                                        </div>
-                                        <div>
-                                            <label>Action Plan Deadline</label>
-                                            <input id="f-action_plan_deadline" type="date" value={form.action_plan_deadline ?? ""} onChange={e => { handleFieldChange('action_plan_deadline', e.target.value); }} onBlur={() => handleBlur('f-action_plan_deadline')} className={(errorField === 'f-action_plan_deadline' || fieldErrors['f-action_plan_deadline']) ? 'border-red-500 ring-2 ring-red-100' : ''} disabled={viewOnly} />
-                                            {fieldErrors['f-action_plan_deadline'] && (
-                                                <p className="mt-1 text-xs text-red-500">{fieldErrors['f-action_plan_deadline']}</p>
-                                            )}
-                                        </div>
-                                        <div className="md:col-span-2">
-                                            <label>Status</label>
-                                            <select id="f-status" value={form.status} onChange={e => updateForm('status', e.target.value)} className="select-custom" disabled={viewOnly}>
-                                                {STATUSES.map(s => <option key={s} value={s}>{s}</option>)}
-                                            </select>
-                                        </div>
+                            {idx === 3 && (
+                                <div className="grid grid-cols-1 gap-x-8 gap-y-6 px-6 pb-6 pt-6 md:grid-cols-3">
+                                    <div>
+                                        <label htmlFor="f-risk_treatment">Risk Treatment *</label>
+                                        <select id="f-risk_treatment" value={form.risk_treatment} onChange={e => {
+                                            handleFieldChange('risk_treatment', e.target.value);
+                                            setFieldErrors(prev => {
+                                                const copy = { ...prev };
+                                                delete copy['f-action_plan'];
+                                                delete copy['f-action_plan_deadline'];
+                                                return copy;
+                                            });
+                                        }} onBlur={() => handleBlur('f-risk_treatment')} className={`select-custom ${(errorField === 'f-risk_treatment' || fieldErrors['f-risk_treatment']) ? 'border-red-500 ring-2 ring-red-100' : ''}`} disabled={viewOnly}>
+                                            <option value="" disabled>Select treatment...</option>
+                                            {RISK_TREATMENTS.map(rt => <option key={rt} value={rt}>{rt}</option>)}
+                                        </select>
+                                        {fieldErrors['f-risk_treatment'] && (
+                                            <p className="mt-1 text-xs text-red-500">{fieldErrors['f-risk_treatment']}</p>
+                                        )}
                                     </div>
-                                )}
-                            </div>
+                                    <div className="md:col-span-2">
+                                        <label htmlFor="f-action_plan">Action Plan</label>
+                                        <textarea id="f-action_plan" rows={3} value={form.action_plan ?? ""} onChange={e => { handleFieldChange('action_plan', e.target.value); }} onBlur={() => handleBlur('f-action_plan')} placeholder="Describe action plan..." className={(errorField === 'f-action_plan' || fieldErrors['f-action_plan']) ? 'border-red-500 ring-2 ring-red-100' : ''} disabled={viewOnly}></textarea>
+                                        {fieldErrors['f-action_plan'] && (
+                                            <p className="mt-1 text-xs text-red-500">{fieldErrors['f-action_plan']}</p>
+                                        )}
+                                    </div>
+                                    <div>
+                                        <label htmlFor="f-action_plan_deadline">Action Plan Deadline</label>
+                                        <input id="f-action_plan_deadline" type="date" value={form.action_plan_deadline ?? ""} onChange={e => { handleFieldChange('action_plan_deadline', e.target.value); }} onBlur={() => handleBlur('f-action_plan_deadline')} className={(errorField === 'f-action_plan_deadline' || fieldErrors['f-action_plan_deadline']) ? 'border-red-500 ring-2 ring-red-100' : ''} disabled={viewOnly} />
+                                        {fieldErrors['f-action_plan_deadline'] && (
+                                            <p className="mt-1 text-xs text-red-500">{fieldErrors['f-action_plan_deadline']}</p>
+                                        )}
+                                    </div>
+                                    <div className="md:col-span-2">
+                                        <label htmlFor="f-status">Status *</label>
+                                        <select id="f-status" value={form.status} onChange={e => handleFieldChange('status', e.target.value)} onBlur={() => handleBlur('f-status')} className={`select-custom ${(errorField === 'f-status' || fieldErrors['f-status']) ? 'border-red-500 ring-2 ring-red-100' : ''}`} disabled={viewOnly}>
+                                            <option value="" disabled>Select status...</option>
+                                            {STATUSES.map(s => <option key={s} value={s}>{s}</option>)}
+                                        </select>
+                                        {fieldErrors['f-status'] && (
+                                            <p className="mt-1 text-xs text-red-500">{fieldErrors['f-status']}</p>
+                                        )}
+                                    </div>
+                                </div>
+                            )}
+                        </div>
                     </div>
                 ))}
             </div>
 
             {!viewOnly && (
-                <div className="mt-8 flex justify-end border-t border-slate-100 pt-8">
+                <div className="mt-8 flex items-center justify-between border-t border-slate-100 pt-8">
                     <button
-                        className="flex items-center gap-2 rounded-lg bg-slate-800 px-8 py-2.5 text-sm font-bold text-white shadow-md shadow-slate-200 hover:bg-slate-700 disabled:opacity-50 transition-all active:scale-95"
+                        className="flex items-center gap-2 rounded-md bg-slate-100 px-5 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-200 transition-all active:scale-95"
+                        onClick={onClearForm}
+                    >
+                        <ICONS.x size={16} /> Clear form
+                    </button>
+                    <button
+                        className="flex items-center gap-2 rounded-md bg-slate-800 px-8 py-2.5 text-sm font-bold text-white hover:bg-slate-700 disabled:opacity-50 transition-all active:scale-95"
                         onClick={handleSaveRisk}
                         disabled={saving}
                     >

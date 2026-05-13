@@ -23,7 +23,7 @@ function renderRefCategories() {
   return (
     <div className="space-y-8">
       <div>
-        <h3 className="mb-4 border-b-2 border-slate-100 pb-2 text-sm font-bold uppercase tracking-wider text-slate-800">Root Cause Categories</h3>
+        <h3 className="mb-4 text-sm font-bold uppercase tracking-wider text-slate-800">Root Cause Categories</h3>
         <table className="w-full border-collapse text-sm">
           <thead>
             <tr className="bg-slate-50 text-[11px] font-bold uppercase tracking-wider text-slate-500">
@@ -41,7 +41,7 @@ function renderRefCategories() {
       </div>
 
       <div>
-        <h3 className="mb-4 border-b-2 border-slate-100 pb-2 text-sm font-bold uppercase tracking-wider text-slate-800">Event Type Classification</h3>
+        <h3 className="mb-4 text-sm font-bold uppercase tracking-wider text-slate-800">Event Type Classification</h3>
         <table className="w-full border-collapse text-sm">
           <thead>
             <tr className="bg-slate-50 text-[11px] font-bold uppercase tracking-wider text-slate-500">
@@ -68,7 +68,7 @@ function renderRefLikelihoodImpact() {
   return (
     <div className="space-y-8">
       <div>
-        <h3 className="mb-4 border-b-2 border-slate-100 pb-2 text-sm font-bold uppercase tracking-wider text-slate-800">Likelihood</h3>
+        <h3 className="mb-4 text-sm font-bold uppercase tracking-wider text-slate-800">Likelihood</h3>
         <table className="w-full border-collapse text-sm">
           <thead>
             <tr className="bg-slate-50 text-[11px] font-bold uppercase tracking-wider text-slate-500">
@@ -88,7 +88,7 @@ function renderRefLikelihoodImpact() {
       </div>
 
       <div>
-        <h3 className="mb-4 border-b-2 border-slate-100 pb-2 text-sm font-bold uppercase tracking-wider text-slate-800">Impact</h3>
+        <h3 className="mb-4 text-sm font-bold uppercase tracking-wider text-slate-800">Impact</h3>
         <table className="w-full border-collapse text-sm">
           <thead>
             <tr className="bg-slate-50 text-[11px] font-bold uppercase tracking-wider text-slate-500">
@@ -107,9 +107,10 @@ function renderRefLikelihoodImpact() {
       </div>
 
       <div>
-        <h3 className="mb-4 border-b-2 border-slate-100 pb-2 text-sm font-bold uppercase tracking-wider text-slate-800">Inherent Risk Matrix (Likelihood × Impact)</h3>
+        <h3 className="mb-4 text-sm font-bold uppercase tracking-wider text-slate-800">Inherent Risk Matrix (Likelihood × Impact)</h3>
         <div className="flex flex-col items-center gap-4 py-4">
-          <div className="flex items-center gap-6">
+          <div className="overflow-x-auto">
+            <div className="flex items-center gap-6">
             <div className="rotate-180 text-[10px] font-bold uppercase tracking-widest text-slate-400 [writing-mode:vertical-lr]">LIKELIHOOD →</div>
             <table className="border-collapse text-center text-[11px] font-bold">
               <thead>
@@ -125,6 +126,7 @@ function renderRefLikelihoodImpact() {
               </tbody>
             </table>
           </div>
+          </div>
           <div className="text-[10px] font-bold uppercase tracking-widest text-slate-400">IMPACT →</div>
         </div>
       </div>
@@ -136,7 +138,7 @@ function renderRefControls() {
   return (
     <div className="space-y-8">
       <div>
-        <h3 className="mb-4 border-b-2 border-slate-100 pb-2 text-sm font-bold uppercase tracking-wider text-slate-800">Controls Rating (Design)</h3>
+        <h3 className="mb-4 text-sm font-bold uppercase tracking-wider text-slate-800">Controls Rating (Design)</h3>
         <table className="w-full border-collapse text-sm text-slate-600">
           <thead>
             <tr className="bg-slate-50 text-[11px] font-bold uppercase tracking-wider text-slate-500">
@@ -154,7 +156,7 @@ function renderRefControls() {
       </div>
 
       <div>
-        <h3 className="mb-4 border-b-2 border-slate-100 pb-2 text-sm font-bold uppercase tracking-wider text-slate-800">Controls Rating (Implementation)</h3>
+        <h3 className="mb-4 text-sm font-bold uppercase tracking-wider text-slate-800">Controls Rating (Implementation)</h3>
         <table className="w-full border-collapse text-sm text-slate-600">
           <thead>
             <tr className="bg-slate-50 text-[11px] font-bold uppercase tracking-wider text-slate-500">
@@ -172,7 +174,7 @@ function renderRefControls() {
       </div>
 
       <div>
-        <h3 className="mb-4 border-b-2 border-slate-100 pb-2 text-sm font-bold uppercase tracking-wider text-slate-800">Types of Controls</h3>
+        <h3 className="mb-4 text-sm font-bold uppercase tracking-wider text-slate-800">Types of Controls</h3>
         <table className="w-full border-collapse text-sm text-slate-600">
           <thead>
             <tr className="bg-slate-50 text-[11px] font-bold uppercase tracking-wider text-slate-500">
@@ -190,9 +192,10 @@ function renderRefControls() {
       </div>
 
       <div>
-        <h3 className="mb-4 border-b-2 border-slate-100 pb-2 text-sm font-bold uppercase tracking-wider text-slate-800">Residual Risk Matrix (Controls Rating × Inherent Risk Level)</h3>
+        <h3 className="mb-4 text-sm font-bold uppercase tracking-wider text-slate-800">Residual Risk Matrix (Controls Rating × Inherent Risk Level)</h3>
         <div className="flex flex-col items-center gap-4 py-4">
-          <div className="flex items-center gap-6">
+          <div className="overflow-x-auto">
+            <div className="flex items-center gap-6">
             <div className="rotate-180 text-[10px] font-bold uppercase tracking-widest text-slate-400 [writing-mode:vertical-lr]">CONTROLS RATING →</div>
             <table className="border-collapse text-center text-[11px] font-bold">
               <thead>
@@ -208,6 +211,7 @@ function renderRefControls() {
               </tbody>
             </table>
           </div>
+          </div>
           <div className="text-[10px] font-bold uppercase tracking-widest text-slate-400">INHERENT RISK LEVEL →</div>
         </div>
       </div>
@@ -219,7 +223,7 @@ function renderRefTreatment() {
   return (
     <div className="space-y-8">
       <div>
-        <h3 className="mb-4 border-b-2 border-slate-100 pb-2 text-sm font-bold uppercase tracking-wider text-slate-800">Risk Treatment Options</h3>
+        <h3 className="mb-4 text-sm font-bold uppercase tracking-wider text-slate-800">Risk Treatment Options</h3>
         <table className="w-full border-collapse text-sm text-slate-600">
           <thead>
             <tr className="bg-slate-50 text-[11px] font-bold uppercase tracking-wider text-slate-500">
@@ -385,7 +389,7 @@ function TutorialContent({ department, onSectionChange, onOpenRef, currentOpenSe
     <div className="flex flex-1 flex-col overflow-hidden">
       {/* Step content area */}
       <div className="flex-1 overflow-y-auto p-6 bg-slate-50/30">
-        <div className="mb-1 text-[10px] font-bold uppercase tracking-widest text-blue-500">
+        <div className="mb-1 text-[11px] font-bold uppercase tracking-[0.1em] text-blue-500">
           Step {stepNum} of {totalSteps}
         </div>
         <h3 className="mb-3 text-lg font-bold text-slate-800">{current.title}</h3>
@@ -404,7 +408,7 @@ function TutorialContent({ department, onSectionChange, onOpenRef, currentOpenSe
           <div>
             {!isFirst && (
               <button
-                className="rounded-lg bg-slate-100 px-4 py-2 text-xs font-bold text-slate-600 hover:bg-slate-200 transition-colors"
+                className="rounded-md bg-slate-100 px-4 py-2 text-xs font-bold text-slate-600 hover:bg-slate-200 transition-colors"
                 onClick={() => setStep(s => s - 1)}
               >
                 Back
@@ -414,14 +418,14 @@ function TutorialContent({ department, onSectionChange, onOpenRef, currentOpenSe
           <div>
             {!isLast ? (
               <button
-                className="rounded-lg bg-blue-600 px-6 py-2 text-xs font-bold text-white shadow-md shadow-blue-100 hover:bg-blue-700 transition-colors"
+                className="rounded-md bg-blue-600 px-6 py-2 text-xs font-bold text-white hover:bg-blue-700 transition-colors"
                 onClick={() => setStep(s => s + 1)}
               >
                 Next
               </button>
             ) : (
               <button
-                className="rounded-lg bg-emerald-600 px-6 py-2 text-xs font-bold text-white shadow-md shadow-emerald-100 hover:bg-emerald-700 transition-colors"
+                className="rounded-md bg-emerald-600 px-6 py-2 text-xs font-bold text-white hover:bg-emerald-700 transition-colors"
                 onClick={onOpenRef}
               >
                 Reference Guide
@@ -450,7 +454,7 @@ function ReferenceContent({ refTab, setRefTab }: ReferenceContentProps) {
             className={`-mb-px rounded-t-lg border-b-2 px-4 py-2.5 text-xs font-bold transition-all ${
               i === refTab
                 ? 'border-slate-800 bg-slate-50 text-slate-800'
-                : 'border-transparent text-slate-400 hover:text-slate-600'
+                : 'border-transparent text-slate-500 hover:text-slate-600'
             }`}
             onClick={() => setRefTab(i)}
           >
@@ -461,7 +465,7 @@ function ReferenceContent({ refTab, setRefTab }: ReferenceContentProps) {
 
       {/* Tab content */}
       <div className="flex-1 overflow-y-auto p-6 bg-slate-50/30">
-        <div className="animate-in fade-in slide-in-from-bottom-4 duration-300">
+        <div>
           {refTab === 0 && renderRefCategories()}
           {refTab === 1 && renderRefLikelihoodImpact()}
           {refTab === 2 && renderRefControls()}
@@ -594,7 +598,7 @@ export default function ContentDrawer({
       >
         {/* Header */}
         {header && (
-          <div className="flex items-center justify-between border-b border-slate-100 bg-slate-50/50 p-6 flex-shrink-0">
+          <div className="flex items-center justify-between border-b border-slate-100 bg-white p-6 flex-shrink-0">
             <div className="flex items-center gap-3">
               <div className={`flex h-10 w-10 items-center justify-center rounded-lg ${header.iconBg}`}>
                 {header.icon}
@@ -631,11 +635,11 @@ export default function ContentDrawer({
                     </div>
                     <div className="space-y-4">
                       <div>
-                        <span className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">Risk Description</span>
+                        <span className="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1">Risk Description</span>
                         <p className="text-sm text-slate-700 leading-relaxed">{ex.risk_description}</p>
                       </div>
                       <div>
-                        <span className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">Possible Causes</span>
+                        <span className="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1">Possible Causes</span>
                         <p className="text-sm text-slate-600 leading-relaxed">{ex.possible_causes}</p>
                       </div>
                       <div className="flex flex-wrap gap-2">
@@ -647,7 +651,7 @@ export default function ContentDrawer({
                         </span>
                       </div>
                       <div className="border-t border-slate-100 pt-4">
-                        <span className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">Controls</span>
+                        <span className="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1">Controls</span>
                         <p className="text-sm text-slate-700 leading-relaxed mb-2">{ex.control_description}</p>
                         <div className="flex flex-wrap gap-2">
                           <span className="inline-flex items-center rounded-md bg-emerald-50 px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-emerald-700">

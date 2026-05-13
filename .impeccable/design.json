@@ -1,0 +1,239 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-05-12T00:00:00.000Z",
+  "title": "Design System: RCSA Form",
+  "extensions": {
+    "colorMeta": {
+      "primary": {
+        "role": "primary",
+        "displayName": "Midnight Surface",
+        "canonical": "oklch(0.21 0.03 264)",
+        "tonalRamp": ["oklch(0.15 0.025 264)", "oklch(0.18 0.028 264)", "oklch(0.21 0.03 264)", "oklch(0.28 0.03 264)", "oklch(0.35 0.028 264)", "oklch(0.45 0.025 264)", "oklch(0.6 0.02 264)", "oklch(0.8 0.01 264)"]
+      },
+      "accent": {
+        "role": "accent",
+        "displayName": "Teal Marker",
+        "canonical": "oklch(0.7 0.14 185)",
+        "tonalRamp": ["oklch(0.25 0.10 185)", "oklch(0.35 0.12 185)", "oklch(0.45 0.14 185)", "oklch(0.55 0.15 185)", "oklch(0.7 0.14 185)", "oklch(0.8 0.09 185)", "oklch(0.9 0.05 185)", "oklch(0.97 0.02 185)"]
+      },
+      "neutral-bg": {
+        "role": "neutral",
+        "displayName": "Page Ground",
+        "canonical": "oklch(0.97 0.005 240)",
+        "tonalRamp": ["oklch(0.15 0.01 240)", "oklch(0.25 0.01 240)", "oklch(0.35 0.008 240)", "oklch(0.45 0.007 240)", "oklch(0.6 0.006 240)", "oklch(0.75 0.005 240)", "oklch(0.89 0.004 240)", "oklch(0.97 0.005 240)"]
+      },
+      "surface": {
+        "role": "neutral",
+        "displayName": "Card White",
+        "canonical": "oklch(1 0 0)",
+        "tonalRamp": ["oklch(0.2 0 0)", "oklch(0.35 0 0)", "oklch(0.5 0 0)", "oklch(0.65 0 0)", "oklch(0.8 0 0)", "oklch(0.9 0 0)", "oklch(0.97 0 0)", "oklch(1 0 0)"]
+      },
+      "border": {
+        "role": "neutral",
+        "displayName": "Border Line",
+        "canonical": "oklch(0.89 0.01 250)",
+        "tonalRamp": ["oklch(0.2 0.01 250)", "oklch(0.35 0.01 250)", "oklch(0.5 0.01 250)", "oklch(0.65 0.01 250)", "oklch(0.78 0.01 250)", "oklch(0.89 0.01 250)", "oklch(0.95 0.005 250)", "oklch(0.98 0.003 250)"]
+      },
+      "text-primary": {
+        "role": "neutral",
+        "displayName": "Heading Ink",
+        "canonical": "oklch(0.25 0.02 260)",
+        "tonalRamp": ["oklch(0.15 0.02 260)", "oklch(0.2 0.02 260)", "oklch(0.25 0.02 260)", "oklch(0.32 0.02 260)", "oklch(0.42 0.018 260)", "oklch(0.55 0.015 260)", "oklch(0.7 0.01 260)", "oklch(0.88 0.005 260)"]
+      },
+      "danger": {
+        "role": "danger",
+        "displayName": "Danger",
+        "canonical": "oklch(0.55 0.24 10)",
+        "tonalRamp": ["oklch(0.25 0.20 10)", "oklch(0.35 0.22 10)", "oklch(0.45 0.24 10)", "oklch(0.55 0.24 10)", "oklch(0.65 0.20 10)", "oklch(0.75 0.15 10)", "oklch(0.85 0.10 10)", "oklch(0.95 0.04 10)"]
+      },
+      "risk-critical": {
+        "role": "critical",
+        "displayName": "Critical Rose",
+        "canonical": "oklch(0.55 0.24 10)",
+        "tonalRamp": ["oklch(0.25 0.20 10)", "oklch(0.35 0.22 10)", "oklch(0.45 0.24 10)", "oklch(0.55 0.24 10)", "oklch(0.65 0.20 10)", "oklch(0.75 0.15 10)", "oklch(0.85 0.10 10)", "oklch(0.95 0.04 10)"]
+      },
+      "risk-high": {
+        "role": "high",
+        "displayName": "High Orange",
+        "canonical": "oklch(0.65 0.22 40)",
+        "tonalRamp": ["oklch(0.25 0.18 40)", "oklch(0.35 0.20 40)", "oklch(0.45 0.22 40)", "oklch(0.55 0.23 40)", "oklch(0.65 0.22 40)", "oklch(0.75 0.18 40)", "oklch(0.85 0.12 40)", "oklch(0.95 0.05 40)"]
+      },
+      "risk-medium": {
+        "role": "medium",
+        "displayName": "Medium Amber",
+        "canonical": "oklch(0.75 0.19 75)",
+        "tonalRamp": ["oklch(0.25 0.15 75)", "oklch(0.35 0.17 75)", "oklch(0.45 0.19 75)", "oklch(0.55 0.20 75)", "oklch(0.65 0.20 75)", "oklch(0.75 0.19 75)", "oklch(0.85 0.13 75)", "oklch(0.95 0.05 75)"]
+      },
+      "risk-low": {
+        "role": "low",
+        "displayName": "Low Emerald",
+        "canonical": "oklch(0.65 0.17 158)",
+        "tonalRamp": ["oklch(0.25 0.14 158)", "oklch(0.35 0.16 158)", "oklch(0.45 0.18 158)", "oklch(0.55 0.18 158)", "oklch(0.65 0.17 158)", "oklch(0.75 0.14 158)", "oklch(0.85 0.10 158)", "oklch(0.95 0.04 158)"]
+      }
+    },
+    "typographyMeta": {
+      "body": {
+        "displayName": "Body",
+        "purpose": "All form content, table cells, descriptions, paragraphs. Unconstrained line length in tables; 65-75ch in prose."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Card headings, modal titles, form section titles."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Primary page title and major section titles. Appears once per view."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Form field labels, table headers. Distinctive uppercase + wide tracking + bold treatment."
+      }
+    },
+    "shadows": [
+      { "name": "surface", "value": "0 1px 2px 0 rgba(0,0,0,0.05)", "purpose": "Default card and container separation from the page ground." },
+      { "name": "elevated", "value": "0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.1)", "purpose": "Login card and elevated containers." },
+      { "name": "modal", "value": "0 25px 50px -12px rgba(0,0,0,0.25)", "purpose": "Modals, editing-active forms." },
+      { "name": "drawer", "value": "0 20px 50px rgba(0,0,0,0.2)", "purpose": "Examples drawer — highest surface." },
+      { "name": "overlay", "value": "0 4px 24px rgba(0,0,0,0.12)", "purpose": "Diffuse backdrop for tutorial tooltips and overlay highlights." }
+    ],
+    "motion": [
+      { "name": "ease-standard", "value": "cubic-bezier(0.4, 0, 0.2, 1)", "purpose": "Default easing for state transitions (hover, focus, active)." },
+      { "name": "ease-spring", "value": "cubic-bezier(0.34, 1.56, 0.64, 1)", "purpose": "Over-shoot ease for drawer openings and bouncy transitions." },
+      { "name": "duration-instant", "value": "150ms", "purpose": "Hover and active state transitions." },
+      { "name": "duration-standard", "value": "300ms", "purpose": "Focus, loading, and visibility toggles." },
+      { "name": "duration-slow", "value": "500ms", "purpose": "Overlay fade-in, drawer slide, modal backdrop transitions." }
+    ],
+    "breakpoints": [
+      { "name": "sm", "value": "640px" },
+      { "name": "md", "value": "768px" },
+      { "name": "lg", "value": "1024px" },
+      { "name": "xl", "value": "1280px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The most committed action on any surface. Always the rightmost button in paired layouts.",
+      "html": "<button class=\"ds-btn-primary\">Save Entry</button>",
+      "css": ".ds-btn-primary { background: #0f172a; color: #ffffff; font-family: Inter, system-ui, sans-serif; font-size: 0.875rem; font-weight: 700; padding: 12px 40px; border: none; border-radius: 6px; cursor: pointer; transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1), transform 150ms cubic-bezier(0.4, 0, 0.2, 1); } .ds-btn-primary:hover { background: #1e293b; } .ds-btn-primary:focus-visible { outline: none; box-shadow: 0 0 0 2px #0f172a, 0 0 0 4px #ffffff; } .ds-btn-primary:active { transform: scale(0.95); } .ds-btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Neutral action for cancel, close, or back. Paired with a primary button on its right.",
+      "html": "<button class=\"ds-btn-secondary\">Cancel</button>",
+      "css": ".ds-btn-secondary { background: #f1f5f9; color: #334155; font-family: Inter, system-ui, sans-serif; font-size: 0.875rem; font-weight: 600; padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer; transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1), transform 150ms cubic-bezier(0.4, 0, 0.2, 1); } .ds-btn-secondary:hover { background: #e2e8f0; } .ds-btn-secondary:focus-visible { outline: none; box-shadow: 0 0 0 2px #94a3b8, 0 0 0 4px #ffffff; } .ds-btn-secondary:active { transform: scale(0.95); }"
+    },
+    {
+      "name": "Danger Button",
+      "kind": "button",
+      "refersTo": "button-danger",
+      "description": "Destructive confirmation. Used exclusively for delete operations.",
+      "html": "<button class=\"ds-btn-danger\">Delete</button>",
+      "css": ".ds-btn-danger { background: #e11d48; color: #ffffff; font-family: Inter, system-ui, sans-serif; font-size: 0.875rem; font-weight: 600; padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer; transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1), transform 150ms cubic-bezier(0.4, 0, 0.2, 1); } .ds-btn-danger:hover { background: #be123c; } .ds-btn-danger:focus-visible { outline: none; box-shadow: 0 0 0 2px #e11d48, 0 0 0 4px #ffffff; } .ds-btn-danger:active { transform: scale(0.95); }"
+    },
+    {
+      "name": "Text Input",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Default text input for form fields and search. The teal focus ring is the only colored state.",
+      "html": "<input class=\"ds-input\" type=\"text\" placeholder=\"Enter value...\" />",
+      "css": ".ds-input { width: 100%; background: #f8fafc; color: #334155; font-family: Inter, system-ui, sans-serif; font-size: 0.875rem; padding: 10px 16px; border: 1px solid #e2e8f0; border-radius: 6px; outline: none; min-height: 44px; transition: border-color 150ms cubic-bezier(0.4, 0, 0.2, 1), box-shadow 150ms cubic-bezier(0.4, 0, 0.2, 1); box-sizing: border-box; } .ds-input::placeholder { color: #94a3b8; } .ds-input:focus { border-color: #14b8a6; box-shadow: 0 0 0 2px rgba(20, 184, 166, 0.1); } .ds-input:disabled { opacity: 0.5; cursor: not-allowed; }"
+    },
+    {
+      "name": "Status Badge",
+      "kind": "chip",
+      "refersTo": "chip-status",
+      "description": "Compact status indicator pill. Three flavors: Open (amber), In Progress (blue), Closed (emerald).",
+      "html": "<span class=\"ds-badge-open\">Open</span>",
+      "css": ".ds-badge-open { display: inline-flex; align-items: center; padding: 2px 10px; border-radius: 9999px; font-family: Inter, system-ui, sans-serif; font-size: 0.625rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; background: #fef3c7; color: #b45309; } .ds-badge-in-progress { display: inline-flex; align-items: center; padding: 2px 10px; border-radius: 9999px; font-family: Inter, system-ui, sans-serif; font-size: 0.625rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; background: #dbeafe; color: #1d4ed8; } .ds-badge-closed { display: inline-flex; align-items: center; padding: 2px 10px; border-radius: 9999px; font-family: Inter, system-ui, sans-serif; font-size: 0.625rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; background: #d1fae5; color: #047857; }"
+    },
+    {
+      "name": "Score Display",
+      "kind": "custom",
+      "refersTo": "score-display",
+      "description": "Computed risk score output box. Shows the numeric score in large bold colored text with a label badge. Never editable, always computed.",
+      "html": "<div class=\"ds-score\"><span class=\"ds-score-value\" style=\"color: #f43f5e;\">12</span><span class=\"ds-score-label\" style=\"background: rgba(244,63,94,0.18); color: #f43f5e;\">Critical</span></div>",
+      "css": ".ds-score { display: flex; align-items: center; gap: 12px; min-height: 46px; padding: 10px 16px; background: rgba(241,245,249,0.8); border-radius: 6px; } .ds-score-value { font-size: 1.5rem; font-weight: 700; font-family: Inter, system-ui, sans-serif; line-height: 1; } .ds-score-label { display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 4px; font-size: 0.6875rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; }"
+    },
+    {
+      "name": "Card Container",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "Primary surface container. Used for form sections and table wrappers.",
+      "html": "<div class=\"ds-card\" style=\"padding: 32px;\"><h2 style=\"font-family: Inter, system-ui, sans-serif; font-size: 1.25rem; font-weight: 700; color: #1e293b; margin: 0 0 24px 0; padding-bottom: 24px; border-bottom: 1px solid #f1f5f9;\">Section Title</h2><p style=\"font-family: Inter, system-ui, sans-serif; font-size: 0.875rem; color: #334155; line-height: 1.625; margin: 0;\">Content area.</p></div>",
+      "css": ".ds-card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 16px; box-shadow: 0 1px 2px 0 rgba(0,0,0,0.05); box-sizing: border-box; }"
+    },
+    {
+      "name": "Icon Table Action Button",
+      "kind": "button",
+      "refersTo": "icon-button",
+      "description": "Compact 32x32 square icon button for table row actions. Three variants: view/edit (indigo hover) and delete (rose hover).",
+      "html": "<button class=\"ds-icon-btn\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M17 3a2.85 2.85 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z\"/></svg></button>",
+      "css": ".ds-icon-btn { display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; border: none; border-radius: 6px; background: transparent; color: #94a3b8; cursor: pointer; transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1), color 150ms cubic-bezier(0.4, 0, 0.2, 1); } .ds-icon-btn:hover { background: #eef2ff; color: #4f46e5; } .ds-icon-btn-danger:hover { background: #fff1f2; color: #e11d48; } .ds-icon-btn:focus-visible { outline: none; box-shadow: 0 0 0 2px #94a3b8; }"
+    },
+    {
+      "name": "Select Dropdown",
+      "kind": "input",
+      "refersTo": "select",
+      "description": "Custom-styled select with inline SVG chevron. Uses same height and focus treatment as text inputs.",
+      "html": "<div style=\"position: relative;\"><select class=\"ds-select\"><option value=\"\" disabled selected>Select option...</option><option>Option 1</option><option>Option 2</option></select></div>",
+      "css": ".ds-select { width: 100%; background: #f8fafc url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E\") no-repeat right 1rem center; color: #334155; font-family: Inter, system-ui, sans-serif; font-size: 0.875rem; padding: 10px 40px 10px 16px; border: 1px solid #e2e8f0; border-radius: 6px; outline: none; min-height: 44px; appearance: none; cursor: pointer; transition: border-color 150ms cubic-bezier(0.4, 0, 0.2, 1), box-shadow 150ms cubic-bezier(0.4, 0, 0.2, 1); box-sizing: border-box; } .ds-select:focus { border-color: #14b8a6; box-shadow: 0 0 0 2px rgba(20, 184, 166, 0.1); } .ds-select:disabled { opacity: 0.5; cursor: not-allowed; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Risk Register",
+    "overview": "A quiet, methodical tool for banking risk professionals. This is the visual language of a well-kept logbook: organized, trustworthy, every entry exact. The interface steps back so the data steps forward. No decorative flourishes, no dashboard theatrics. Just clear structure, consistent behavior, and the confidence that comes from knowing every score computes correctly. The system is a product register for an internal banking application. Layout renders as layered surfaces on a tinted neutral ground. Form sections carry distinct visual breaks (borders, spacing, section headers with a teal leading stripe) that guide the eye through the assessment workflow without handholding. Interactive elements are tactile and confident — buttons press into the surface, inputs glow on focus, state changes feel immediate.",
+    "keyCharacteristics": [
+      "Layered surfaces on a light neutral background (slate-50)",
+      "One accent color (teal-500) reserved for focus indicators and section markers",
+      "Risk scores stand alone with bold color: green, amber, orange, rose in increasing severity",
+      "Single sans-serif typeface (Inter) across all roles — body, labels, headings, data",
+      "Tables as a first-class citizen: dense, scannable, predictable column layouts",
+      "Modals are rare: reserved for confirmations, process management, and the reference guide"
+    ],
+    "rules": [
+      {
+        "name": "The One Accent Rule",
+        "body": "Teal appears on focus rings and section header stripes only. It must never exceed 5% of any screen. Its rarity is the measure of the system's restraint.",
+        "section": "colors"
+      },
+      {
+        "name": "The Risk-Only Spectrum Rule",
+        "body": "Saturated green, amber, orange, and rose appear exclusively on risk score badges and matrix cells. These colors carry meaning — do not repurpose them for UI chrome, link colors, or decorative elements.",
+        "section": "colors"
+      },
+      {
+        "name": "The Flat-By-Default Rule",
+        "body": "Surfaces at rest use the minimum shadow necessary to separate from the ground. Shadows grow only for active states (form editing), modal elevation, or the drawer. Rested surfaces do not float.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do use the teal accent (teal-500) for focus rings and form section header stripes only. Never for decorative borders, badges, or buttons.",
+      "Do reserve the risk spectrum colors (green, amber, orange, rose) exclusively for risk score displays and matrix cells.",
+      "Do keep inputs at minimum 44px height for touch targeting.",
+      "Do place form labels above fields, not as placeholder text.",
+      "Do use the full card radius (16px / rounded-2xl) consistently for all major surface containers.",
+      "Do separate form sections with border-top + generous padding (32px), not with card-inside-card nesting.",
+      "Do use active:scale-95 on all interactive elements for tactile press feedback.",
+      "Do use 0.75rem bold uppercase 0.1em tracking for all form labels and table headers.",
+      "Do use skeletal/spinner loading states for data fetches; never render partially-populated forms."
+    ],
+    "donts": [
+      "Don't use side-stripe borders (border-left / border-right greater than 1px as a colored accent). Use the teal-500 marker stripe on section headers or nothing.",
+      "Don't use gradient text (background-clip: text + gradient). All text is solid color.",
+      "Don't use glassmorphism — no blurred glass cards, no frosted backdrops beyond the modal overlay.",
+      "Don't use display fonts in UI labels, buttons, or data cells. Inter is the only typeface.",
+      "Don't reinvent standard affordances — no custom scrollbars, no non-standard form controls.",
+      "Don't use the hero-metric template (big number, small label, supporting stats, gradient accent). Score displays are functional, not decorative.",
+      "Don't use identical card grids with icon + heading + text repeated endlessly.",
+      "Don't use modals as the first thought for interactions — exhaust inline and progressive patterns first.",
+      "Don't use decorative motion that does not convey state — no entrance choreography, no page-load sequences.",
+      "Don't use heavy color or full-saturation accents on inactive states."
+    ]
+  }
+}

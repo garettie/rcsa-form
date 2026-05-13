@@ -39,24 +39,28 @@ export const IMPACT_LABELS = {
         4: "Critical",
       };
 export const CONTROL_DESIGN_LABELS = {
+        0: "Not Selected",
         1: "Strong",
         2: "Satisfactory",
         3: "Needs Improvement",
         4: "Unsatisfactory",
       };
 export const CONTROL_IMPL_LABELS = {
+        0: "Not Selected",
         1: "Fully Implemented",
         2: "Mostly Implemented",
         3: "Partially Implemented",
         4: "Not Implemented",
       };
 export const CONTROLS_RATING_LABELS = {
+        0: "Not Selected",
         1: "Strong",
         2: "Satisfactory",
         3: "Needs Improvement",
         4: "Unsatisfactory",
       };
 export const RESIDUAL_RISK_LABELS = {
+        0: "Not Selected",
         1: "Minor",
         2: "Moderate",
         3: "Major",
@@ -66,6 +70,7 @@ export const RISK_TREATMENTS = ["Accept", "Avoid", "Reduce", "Transfer"];
 export const CONTROL_TYPES = ["Preventive", "Detective", "Corrective", "None"];
 export const STATUSES = ["Open", "In Progress", "Closed"];
 export const RISK_COLORS = {
+        0: "#94a3b8",
         1: "#10b981",
         2: "#f59e0b",
         3: "#f97316", 4: "#f43f5e" };

@@ -36,6 +36,8 @@ export default function App() {
         handleLogin,
         handleLogout,
         handleSaveRisk,
+        saveSuccess,
+        setSaveSuccess,
         handleDeleteRisk,
         handleEditRisk,
         handleViewRisk,
@@ -58,11 +60,28 @@ export default function App() {
     };
 
     useEffect(() => {
-        if (!showModal || !department) return;
-        const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') setShowModal(false); };
+        const handler = (e: KeyboardEvent) => {
+            if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+                e.preventDefault();
+                if (editingId && !viewOnly) {
+                    handleSaveRisk();
+                }
+                return;
+            }
+            if (e.key === 'Escape') {
+                if (showModal && department) {
+                    setShowModal(false);
+                } else if (editingId) {
+                    clearForm();
+                } else if (activeDrawer) {
+                    setActiveDrawer(null);
+                }
+                return;
+            }
+        };
         document.addEventListener('keydown', handler);
         return () => document.removeEventListener('keydown', handler);
-    }, [showModal, department, setShowModal]);
+    }, [showModal, department, editingId, viewOnly, handleSaveRisk, clearForm, activeDrawer, setActiveDrawer, setShowModal]);
 
     if (checkingAuth) {
         return <div className="min-h-screen bg-slate-50 flex items-center justify-center">Loading...</div>;
@@ -100,6 +119,16 @@ export default function App() {
                     <button className="flex items-center rounded-lg border border-slate-200 bg-white p-2 text-slate-400 hover:bg-red-50 hover:text-red-600 hover:border-red-100 transition-all" onClick={handleLogout} title="Logout"><ICONS.logout size={16} /></button>
                 </div>
             </div>
+
+            {saveSuccess && (
+                <div className="mb-6 flex items-center gap-3 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700 shadow-sm transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]">
+                    <svg className="h-4 w-4 flex-shrink-0" viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a7 7 0 1 0 0 14A7 7 0 0 0 8 1zm3.36 5.65l-4 4a.5.5 0 0 1-.7 0l-2-2a.5.5 0 1 1 .7-.7L7 9.29l3.65-3.64a.5.5 0 0 1 .7.7z"/></svg>
+                    <span>Risk saved successfully.</span>
+                    <button className="ml-auto flex items-center text-emerald-500 hover:text-emerald-700 transition-colors" onClick={() => setSaveSuccess(false)} aria-label="Dismiss">
+                        <svg className="h-4 w-4" viewBox="0 0 16 16" fill="currentColor"><path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/></svg>
+                    </button>
+                </div>
+            )}
 
             <RiskForm
                 form={form}

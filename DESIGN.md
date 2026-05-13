@@ -116,11 +116,11 @@ components:
 
 A quiet, methodical tool for banking risk professionals. This is the visual language of a well-kept logbook: organized, trustworthy, every entry exact. The interface steps back so the data steps forward. No decorative flourishes, no dashboard theatrics. Just clear structure, consistent behavior, and the confidence that comes from knowing every score computes correctly.
 
-The system is a **product register** for an internal banking application. Layout renders as layered surfaces on a tinted neutral ground. Form sections carry distinct visual breaks (borders, spacing, section headers with a teal leading stripe) that guide the eye through the assessment workflow without handholding. Interactive elements are **tactile and confident** — buttons press into the surface, inputs glow on focus, state changes feel immediate.
+The system is a **product register** for an internal banking application. Layout renders as layered surfaces on a tinted neutral ground. Form sections carry distinct visual breaks (borders, spacing) that guide the eye through the assessment workflow without handholding. Interactive elements are **tactile and confident** — buttons press into the surface, inputs glow on focus, state changes feel immediate.
 
 **Key Characteristics:**
 - Layered surfaces on a light neutral background (slate-50)
-- One accent color (teal-500) reserved for focus indicators and section markers
+- One accent color (teal-500) reserved for focus indicators
 - Risk scores stand alone with bold color: green, amber, orange, rose in increasing severity
 - Single sans-serif typeface (Inter) across all roles — body, labels, headings, data
 - Tables as a first-class citizen: dense, scannable, predictable column layouts
@@ -134,7 +134,7 @@ A restrained palette built on Tailwind's slate neutral axis with a teal accent a
 - **Midnight Surface** (#0f172a / oklch(0.21 0.03 264)): All primary action buttons, the login submit. The darkest element in the system — reserved for commitment points.
 
 ### Accent
-- **Teal Marker** (#14b8a6 / oklch(0.7 0.14 185)): Focus ring on inputs and selects, the vertical stripe on form section headers. Used on roughly 5% of any screen — its scarcity is the point.
+- **Teal Marker** (#14b8a6 / oklch(0.7 0.14 185)): Focus ring on inputs and selects. Used on roughly 5% of any screen — its scarcity is the point.
 
 ### Neutral
 - **Page Ground** (#f8fafc / oklch(0.97 0.005 240)): Body background. Tinted barely-blue — cold enough to feel deliberate, not so cold as to be clinical.
@@ -157,7 +157,7 @@ A restrained palette built on Tailwind's slate neutral axis with a teal accent a
 - **Critical — Rose** (#f43f5e / oklch(0.55 0.24 10)): Risk level 4. Never used outside risk scores and residual displays.
 
 ### Named Rules
-**The One Accent Rule.** Teal appears on focus rings and section header stripes only. It must never exceed 5% of any screen. Its rarity is the measure of the system's restraint.
+**The One Accent Rule.** Teal appears on focus rings only. It must never exceed 5% of any screen. Its rarity is the measure of the system's restraint.
 
 **The Risk-Only Spectrum Rule.** Saturated green, amber, orange, and rose appear exclusively on risk score badges and matrix cells. These colors carry meaning — do not repurpose them for UI chrome, link colors, or decorative elements.
 
@@ -270,7 +270,7 @@ The process management variant uses a wider variant (90vw, 600px max) to accommo
 ## 6. Do's and Don'ts
 
 ### Do:
-- **Do** use the teal accent (teal-500) for focus rings and form section header stripes only. Never for decorative borders, badges, or buttons.
+- **Do** use the teal accent (teal-500) for focus rings only. Never for decorative borders, badges, or buttons.
 - **Do** reserve the risk spectrum colors (green, amber, orange, rose) exclusively for risk score displays and matrix cells.
 - **Do** keep inputs at minimum 44px height for touch targeting.
 - **Do** place form labels above fields, not as placeholder text.
