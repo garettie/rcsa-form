@@ -49,6 +49,7 @@ export default function App() {
     } = useRCSA();
 
     const [tutorialTargetSection, setTutorialTargetSection] = useState<number | null>(null);
+    const [currentOpenSection, setCurrentOpenSection] = useState(-1);
 
     // Clear tutorial section highlight when leaving tutorial mode
     const handleDrawerChange = (drawer: 'tutorial' | 'reference' | 'examples' | null) => {
@@ -116,6 +117,7 @@ export default function App() {
                 onClearForm={clearForm}
                 onOpenProcessModal={() => setShowProcessModal(true)}
                 tutorialTargetSection={tutorialTargetSection}
+                onOpenSectionChange={setCurrentOpenSection}
             />
 
             <RiskTable
@@ -176,6 +178,7 @@ export default function App() {
                 activeDrawer={activeDrawer}
                 onDrawerChange={handleDrawerChange}
                 onSectionChange={setTutorialTargetSection}
+                currentOpenSection={currentOpenSection}
             />
         </div>
     );

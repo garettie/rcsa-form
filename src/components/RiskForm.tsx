@@ -18,6 +18,7 @@ interface RiskFormProps {
     onClearForm: () => void;
     onOpenProcessModal: () => void;
     tutorialTargetSection?: number | null;
+    onOpenSectionChange?: (section: number) => void;
 }
 
 const SECTIONS = [
@@ -165,6 +166,7 @@ export default function RiskForm({
     onClearForm,
     onOpenProcessModal,
     tutorialTargetSection,
+    onOpenSectionChange,
 }: RiskFormProps) {
     const [openSection, setOpenSection] = useState(-1);
     const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
@@ -243,6 +245,10 @@ export default function RiskForm({
             return () => clearTimeout(timer);
         }
     }, [tutorialTargetSection]);
+
+    useEffect(() => {
+        onOpenSectionChange?.(openSection);
+    }, [openSection, onOpenSectionChange]);
 
     function getSectionState(idx: number): 'empty' | 'partial' | 'complete' {
         if (idx === 0) {

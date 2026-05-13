@@ -12,6 +12,7 @@ interface ContentDrawerProps {
   activeDrawer: DrawerMode;
   onDrawerChange: (drawer: DrawerMode) => void;
   onSectionChange?: (sectionIdx: number) => void;
+  currentOpenSection: number;
 }
 
 // ─── Reference Guide data ─────────────────────────────────────────────────────
@@ -329,10 +330,11 @@ interface TutorialContentProps {
   department?: string;
   onSectionChange?: (sectionIdx: number) => void;
   onOpenRef: () => void;
+  currentOpenSection: number;
 }
 
-function TutorialContent({ department, onSectionChange, onOpenRef }: TutorialContentProps) {
-  const [step, setStep] = useState(0);
+function TutorialContent({ department, onSectionChange, onOpenRef, currentOpenSection }: TutorialContentProps) {
+  const [step, setStep] = useState(() => currentOpenSection >= 0 ? STEP_TO_SECTION.indexOf(currentOpenSection) : 0);
   const prevSectionRef = useRef(STEP_TO_SECTION[0]);
 
   const TUTORIAL_STEPS = useMemo(() => getTutorialSteps(department), [department]);
@@ -478,6 +480,7 @@ export default function ContentDrawer({
   activeDrawer,
   onDrawerChange,
   onSectionChange,
+  currentOpenSection,
 }: ContentDrawerProps) {
   const [refTab, setRefTab] = useState(0);
 
@@ -672,6 +675,7 @@ export default function ContentDrawer({
             department={department}
             onSectionChange={onSectionChange}
             onOpenRef={() => onDrawerChange('reference')}
+            currentOpenSection={currentOpenSection}
           />
         )}
       </div>
