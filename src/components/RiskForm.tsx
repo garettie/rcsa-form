@@ -418,7 +418,7 @@ export default function RiskForm({
                                     </div>
                                     <div className="md:col-span-3">
                                         <label htmlFor="f-risk_description">Risk Description *</label>
-                                        <textarea id="f-risk_description" rows={3} value={form.risk_description} onChange={e => { handleFieldChange('risk_description', e.target.value); }} onBlur={() => handleBlur('f-risk_description')} placeholder="Describe the risk..." required className={(errorField === 'f-risk_description' || fieldErrors['f-risk_description']) ? 'border-red-500 ring-2 ring-red-100' : ''} disabled={viewOnly}></textarea>
+                                        <textarea id="f-risk_description" rows={3} value={form.risk_description} onChange={e => { handleFieldChange('risk_description', e.target.value); }} onBlur={() => handleBlur('f-risk_description')} placeholder='Risk of [bad outcome] due to [threat or hazard]' required className={(errorField === 'f-risk_description' || fieldErrors['f-risk_description']) ? 'border-red-500 ring-2 ring-red-100' : ''} disabled={viewOnly}></textarea>
                                         {fieldErrors['f-risk_description'] && (
                                             <p className="mt-1 text-xs text-red-500">{fieldErrors['f-risk_description']}</p>
                                         )}
