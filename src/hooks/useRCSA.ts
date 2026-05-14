@@ -163,7 +163,11 @@ export function useRCSA() {
     }, []);
 
     const handleLogout = useCallback(async () => {
-        await supabase.auth.signOut();
+        try {
+            await supabase.auth.signOut();
+        } catch {
+            console.error('Logout failed');
+        }
     }, []);
 
     const validateForm = useCallback((): { error: string; field: string } | null => {

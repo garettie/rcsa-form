@@ -1,11 +1,12 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, lazy, Suspense } from 'react';
 import { useRCSA } from './hooks/useRCSA';
 import { DEPARTMENTS, ICONS } from './constants';
 import Login from './components/Login';
 import RiskForm from './components/RiskForm';
 import RiskTable from './components/RiskTable';
 import ProcessModal from './components/ProcessModal';
-import ContentDrawer from './components/ContentDrawer';
+
+const ContentDrawer = lazy(() => import('./components/ContentDrawer'));
 
 export default function App() {
     const {
@@ -69,7 +70,11 @@ export default function App() {
                 return;
             }
             if (e.key === 'Escape') {
-                if (showModal && department) {
+                if (showConfirmModal) {
+                    confirmResolve?.(false);
+                } else if (showProcessModal) {
+                    setShowProcessModal(false);
+                } else if (showModal && department) {
                     setShowModal(false);
                 } else if (editingId) {
                     clearForm();
@@ -81,7 +86,7 @@ export default function App() {
         };
         document.addEventListener('keydown', handler);
         return () => document.removeEventListener('keydown', handler);
-    }, [showModal, department, editingId, viewOnly, handleSaveRisk, clearForm, activeDrawer, setActiveDrawer, setShowModal]);
+    }, [showModal, showProcessModal, setShowProcessModal, showConfirmModal, confirmResolve, department, editingId, viewOnly, handleSaveRisk, clearForm, activeDrawer, setActiveDrawer, setShowModal]);
 
     if (checkingAuth) {
         return <div className="min-h-screen bg-slate-50 flex items-center justify-center">Loading...</div>;
@@ -160,10 +165,10 @@ export default function App() {
 
             {/* Modals */}
             {showModal && (
-                <div className="modal-overlay" onClick={() => { if (department) setShowModal(false); }}>
+                <div className="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="department-modal-title" onClick={() => { if (department) setShowModal(false); }}>
                     <div className="modal-card" onClick={e => e.stopPropagation()}>
                         <div className="mb-1 flex items-center justify-between">
-                            <h2 className="text-xl font-bold text-slate-800">Select Department</h2>
+                            <h2 id="department-modal-title" className="text-xl font-bold text-slate-800">Select Department</h2>
                             {department && (
                                 <button className="flex items-center text-slate-400 hover:text-slate-600 transition-colors" onClick={() => setShowModal(false)} aria-label="Close"><ICONS.x size={18} /></button>
                             )}
@@ -172,7 +177,7 @@ export default function App() {
                         <select value={department} onChange={e => {
                             setDepartment(e.target.value);
                             setShowModal(false);
-                        }} className="select-custom">
+                        }} className="select-custom" autoFocus>
                             <option value="" disabled>Select department...</option>
                             {DEPARTMENTS.map(d => <option key={d} value={d}>{d}</option>)}
                         </select>
@@ -189,26 +194,28 @@ export default function App() {
             />
 
             {showConfirmModal && (
-                <div className="modal-overlay">
+                <div className="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="confirm-title">
                     <div className="modal-card">
-                        <h2 className="mb-1 text-xl font-bold text-slate-800">Confirm</h2>
+                        <h2 id="confirm-title" className="mb-1 text-xl font-bold text-slate-800">Confirm</h2>
                         <p className="mb-6 text-sm text-slate-500">{confirmMessage}</p>
                         <div className="flex justify-end gap-3">
-                            <button className="btn btn-secondary" onClick={() => confirmResolve?.(false)}>Cancel</button>
+                            <button className="btn btn-secondary" onClick={() => confirmResolve?.(false)} autoFocus>Cancel</button>
                             <button className="btn btn-danger" onClick={() => confirmResolve?.(true)}>Delete</button>
                         </div>
                     </div>
                 </div>
             )}
 
-            <ContentDrawer
-                department={department}
-                isVisible={!showModal}
-                activeDrawer={activeDrawer}
-                onDrawerChange={handleDrawerChange}
-                onSectionChange={setTutorialTargetSection}
-                currentOpenSection={currentOpenSection}
-            />
+            <Suspense fallback={null}>
+                <ContentDrawer
+                    department={department}
+                    isVisible={!showModal}
+                    activeDrawer={activeDrawer}
+                    onDrawerChange={handleDrawerChange}
+                    onSectionChange={setTutorialTargetSection}
+                    currentOpenSection={currentOpenSection}
+                />
+            </Suspense>
         </div>
     );
 }
