@@ -273,7 +273,7 @@ export default function RiskForm({
     function getSectionState(idx: number): 'empty' | 'partial' | 'complete' {
         if (idx === 0) {
             const hasAny = !!(form.assessment_period || form.process_id || form.risk_description || form.possible_causes || form.root_cause || form.event_type);
-            const isComplete = !!(form.process_id && form.risk_description);
+            const isComplete = !!(form.assessment_period && form.process_id && (form.risk_description || "").trim() && (form.possible_causes || "").trim() && form.root_cause && form.event_type);
             return isComplete ? 'complete' : hasAny ? 'partial' : 'empty';
         }
         if (idx === 1) {
@@ -281,12 +281,12 @@ export default function RiskForm({
         }
         if (idx === 2) {
             const hasAny = !!(form.control_description || form.control_type || form.control_design_score >= 1 || form.control_implementation_score >= 1);
-            const isComplete = !!(form.control_description && form.control_type);
+            const isComplete = !!(form.control_description && form.control_type && (form.control_description || "").trim() && form.control_design_score >= 1 && form.control_implementation_score >= 1);
             return isComplete ? 'complete' : hasAny ? 'partial' : 'empty';
         }
         if (idx === 3) {
             const hasAny = !!(form.risk_treatment || form.action_plan || form.status);
-            const isComplete = !!form.risk_treatment;
+            const isComplete = !!(form.risk_treatment && form.status);
             return isComplete ? 'complete' : hasAny ? 'partial' : 'empty';
         }
         return 'empty';
@@ -457,7 +457,7 @@ export default function RiskForm({
                                 <div className="grid grid-cols-1 gap-x-8 gap-y-6 px-6 pb-6 pt-6 md:grid-cols-3">
                                     <div>
                                         <label htmlFor="f-likelihood_score">Likelihood Score *</label>
-                                        <select id="f-likelihood_score" value={form.likelihood_score} onChange={e => updateForm('likelihood_score', Number(e.target.value))} onBlur={() => handleBlur('f-likelihood_score')} className={`select-custom ${(errorField === 'f-likelihood_score' || fieldErrors['f-likelihood_score']) ? 'border-red-500 ring-2 ring-red-100' : ''}`} disabled={viewOnly} style={form.likelihood_score >= 1 ? { borderColor: RISK_COLORS[form.likelihood_score as keyof typeof RISK_COLORS], borderWidth: '1.5px' } : {}}>
+                                        <select id="f-likelihood_score" value={form.likelihood_score} onChange={e => handleFieldChange('likelihood_score', Number(e.target.value))} onBlur={() => handleBlur('f-likelihood_score')} className={`select-custom ${(errorField === 'f-likelihood_score' || fieldErrors['f-likelihood_score']) ? 'border-red-500 ring-2 ring-red-100' : ''}`} disabled={viewOnly} style={form.likelihood_score >= 1 ? { borderColor: RISK_COLORS[form.likelihood_score as keyof typeof RISK_COLORS], borderWidth: '1.5px' } : {}}>
                                             <option value={0} disabled>Select likelihood...</option>
                                             {[1, 2, 3, 4].map(n => <option key={n} value={n}>{n} - {LIKELIHOOD_LABELS[n as keyof typeof LIKELIHOOD_LABELS]}</option>)}
                                         </select>
@@ -467,7 +467,7 @@ export default function RiskForm({
                                     </div>
                                     <div>
                                         <label htmlFor="f-impact_score">Impact Score *</label>
-                                        <select id="f-impact_score" value={form.impact_score} onChange={e => updateForm('impact_score', Number(e.target.value))} onBlur={() => handleBlur('f-impact_score')} className={`select-custom ${(errorField === 'f-impact_score' || fieldErrors['f-impact_score']) ? 'border-red-500 ring-2 ring-red-100' : ''}`} disabled={viewOnly} style={form.impact_score >= 1 ? { borderColor: RISK_COLORS[form.impact_score as keyof typeof RISK_COLORS], borderWidth: '1.5px' } : {}}>
+                                        <select id="f-impact_score" value={form.impact_score} onChange={e => handleFieldChange('impact_score', Number(e.target.value))} onBlur={() => handleBlur('f-impact_score')} className={`select-custom ${(errorField === 'f-impact_score' || fieldErrors['f-impact_score']) ? 'border-red-500 ring-2 ring-red-100' : ''}`} disabled={viewOnly} style={form.impact_score >= 1 ? { borderColor: RISK_COLORS[form.impact_score as keyof typeof RISK_COLORS], borderWidth: '1.5px' } : {}}>
                                             <option value={0} disabled>Select impact...</option>
                                             {[1, 2, 3, 4].map(n => <option key={n} value={n}>{n} - {IMPACT_LABELS[n as keyof typeof IMPACT_LABELS]}</option>)}
                                         </select>
@@ -507,7 +507,7 @@ export default function RiskForm({
                                     </div>
                                     <div>
                                         <label htmlFor="f-control_design_score">Control Design *</label>
-                                        <select id="f-control_design_score" value={form.control_design_score} onChange={e => updateForm('control_design_score', Number(e.target.value))} onBlur={() => handleBlur('f-control_design_score')} className={`select-custom ${(errorField === 'f-control_design_score' || fieldErrors['f-control_design_score']) ? 'border-red-500 ring-2 ring-red-100' : ''}`} disabled={viewOnly} style={form.control_design_score >= 1 ? { borderColor: RISK_COLORS[form.control_design_score as keyof typeof RISK_COLORS], borderWidth: '1.5px' } : {}}>
+                                        <select id="f-control_design_score" value={form.control_design_score} onChange={e => handleFieldChange('control_design_score', Number(e.target.value))} onBlur={() => handleBlur('f-control_design_score')} className={`select-custom ${(errorField === 'f-control_design_score' || fieldErrors['f-control_design_score']) ? 'border-red-500 ring-2 ring-red-100' : ''}`} disabled={viewOnly} style={form.control_design_score >= 1 ? { borderColor: RISK_COLORS[form.control_design_score as keyof typeof RISK_COLORS], borderWidth: '1.5px' } : {}}>
                                             <option value={0} disabled>Select design...</option>
                                             {[1, 2, 3, 4].map(n => <option key={n} value={n}>{n} - {CONTROL_DESIGN_LABELS[n as keyof typeof CONTROL_DESIGN_LABELS]}</option>)}
                                         </select>
@@ -517,7 +517,7 @@ export default function RiskForm({
                                     </div>
                                     <div>
                                         <label htmlFor="f-control_implementation_score">Control Implementation *</label>
-                                        <select id="f-control_implementation_score" value={form.control_implementation_score} onChange={e => updateForm('control_implementation_score', Number(e.target.value))} onBlur={() => handleBlur('f-control_implementation_score')} className={`select-custom ${(errorField === 'f-control_implementation_score' || fieldErrors['f-control_implementation_score']) ? 'border-red-500 ring-2 ring-red-100' : ''}`} disabled={viewOnly} style={form.control_implementation_score >= 1 ? { borderColor: RISK_COLORS[form.control_implementation_score as keyof typeof RISK_COLORS], borderWidth: '1.5px' } : {}}>
+                                        <select id="f-control_implementation_score" value={form.control_implementation_score} onChange={e => handleFieldChange('control_implementation_score', Number(e.target.value))} onBlur={() => handleBlur('f-control_implementation_score')} className={`select-custom ${(errorField === 'f-control_implementation_score' || fieldErrors['f-control_implementation_score']) ? 'border-red-500 ring-2 ring-red-100' : ''}`} disabled={viewOnly} style={form.control_implementation_score >= 1 ? { borderColor: RISK_COLORS[form.control_implementation_score as keyof typeof RISK_COLORS], borderWidth: '1.5px' } : {}}>
                                             <option value={0} disabled>Select implementation...</option>
                                             {[1, 2, 3, 4].map(n => <option key={n} value={n}>{n} - {CONTROL_IMPL_LABELS[n as keyof typeof CONTROL_IMPL_LABELS]}</option>)}
                                         </select>

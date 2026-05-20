@@ -232,9 +232,9 @@ export default function RiskTable({
                                         >
                                             <div className="space-y-1">
                                                 {[
-                                                    { label: 'Low', value: 1 },
-                                                    { label: 'Medium', value: 2 },
-                                                    { label: 'High', value: 3 },
+                                                    { label: 'Minor', value: 1 },
+                                                    { label: 'Moderate', value: 2 },
+                                                    { label: 'Major', value: 3 },
                                                     { label: 'Critical', value: 4 },
                                                 ].map(opt => (
                                                     <label key={opt.value} className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-xs text-slate-700 hover:bg-slate-50 transition-colors">
