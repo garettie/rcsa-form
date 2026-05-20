@@ -86,7 +86,7 @@ export default function App() {
         };
         document.addEventListener('keydown', handler);
         return () => document.removeEventListener('keydown', handler);
-    }, [showModal, showProcessModal, setShowProcessModal, showConfirmModal, confirmResolve, department, editingId, viewOnly, handleSaveRisk, clearForm, activeDrawer, setActiveDrawer, setShowModal]);
+    }, [showModal, showProcessModal, setShowProcessModal, showConfirmModal, confirmResolve, department, editingId, viewOnly, saving, handleSaveRisk, clearForm, activeDrawer, setActiveDrawer, setShowModal]);
 
     if (checkingAuth) {
         return <div className="min-h-screen bg-slate-50 flex items-center justify-center">Loading...</div>;
