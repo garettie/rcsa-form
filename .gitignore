@@ -29,13 +29,10 @@ dist-ssr
 .env.*.local
 
 # AI / Agent files
-AGENTS.md
-CLAUDE.md
-GEMINI.md
-*.claude*
-*.aider*
-*.windsurf*
-*.cursor*
+*.claude.*
+*.aider.*
+*.windsurf.*
+*.cursor.*
 
 # OS generated files
 Thumbs.db
