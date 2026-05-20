@@ -1,6 +1,6 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import type { FormState, Risk, Process } from '../types';
-import { fetchProcesses, fetchRisks, saveRiskData, deleteRiskData, saveProcessData, deleteProcessData, supabase } from '../api';
+import { fetchProcesses, fetchRisks, saveRiskData, deleteRiskData, saveProcessData, deleteProcessWithRisks, supabase } from '../api';
 
 function getRiskLevel(score: number) {
     if (score <= 0) return 0;
@@ -69,6 +69,7 @@ export function useRCSA() {
     const [department, setDepartment] = useState(() => localStorage.getItem("rcsa_department") || "");
     const [showModal, setShowModal] = useState(() => !localStorage.getItem("rcsa_department"));
     const [activeDrawer, setActiveDrawer] = useState<'tutorial' | 'reference' | 'examples' | null>(null);
+    const loadIdRef = useRef(0);
     const [risks, setRisks] = useState<Risk[]>([]);
     const [processes, setProcesses] = useState<Process[]>([]);
     const [loading, setLoading] = useState(true);
@@ -89,20 +90,26 @@ export function useRCSA() {
     const [cleanFormSnapshot, setCleanFormSnapshot] = useState<string>(JSON.stringify(getEmptyForm()));
     const isDirty = JSON.stringify(form) !== cleanFormSnapshot;
 
-    const loadData = useCallback(async (options: { silent?: boolean } = {}) => {
+    const loadData = useCallback(async (options: { silent?: boolean } = {}): Promise<boolean> => {
         if (!options.silent) setLoading(true);
+        const thisLoad = ++loadIdRef.current;
         try {
             const [ps, rs] = await Promise.all([
                 fetchProcesses(department),
                 fetchRisks(department)
             ]);
+            if (thisLoad !== loadIdRef.current) return false;
             setProcesses(ps);
             setRisks(rs);
+            return true;
         } catch (e: unknown) {
             const message = getErrorMessage(e);
+            if (thisLoad !== loadIdRef.current) return false;
             setError(message);
+            return false;
+        } finally {
+            if (thisLoad === loadIdRef.current) setLoading(false);
         }
-        setLoading(false);
     }, [department]);
 
     useEffect(() => {
@@ -237,11 +244,15 @@ export function useRCSA() {
                 action_plan_deadline: form.action_plan_deadline || null
             };
             await saveRiskData(dataToSave, editingId);
-            setCleanFormSnapshot(JSON.stringify(getEmptyForm()));
             setSaveSuccess(true);
-            await loadData({ silent: true });
-            setForm(getEmptyForm());
-            setEditingId(null);
+            const reloaded = await loadData({ silent: true });
+            if (reloaded) {
+                setCleanFormSnapshot(JSON.stringify(getEmptyForm()));
+                setForm(getEmptyForm());
+                setEditingId(null);
+            } else {
+                setError("Saved successfully, but failed to refresh the list. Reload page if needed.");
+            }
             return true;
         } catch (e: unknown) {
 const message = getErrorMessage(e);
@@ -299,7 +310,7 @@ const message = getErrorMessage(e);
             const newProcess = await saveProcessData(department, name);
             setProcesses(prev => [...prev, newProcess]);
         } catch (e: unknown) {
-            const message = e instanceof Error ? e.message : 'Unknown error';
+            const message = getErrorMessage(e);
             setError("Failed to add process: " + message);
         }
     }, [department]);
@@ -307,11 +318,11 @@ const message = getErrorMessage(e);
     const handleDeleteProcess = useCallback(async (id: string) => {
         if (!await confirm("Delete process? All associated risks will also be deleted.")) return;
         try {
-            await deleteProcessData(id);
+            await deleteProcessWithRisks(id);
             setProcesses(prev => prev.filter(p => p.id !== id));
             setRisks(prev => prev.filter(r => r.process_id !== id));
         } catch (e: unknown) {
-            const message = e instanceof Error ? e.message : 'Unknown error';
+            const message = getErrorMessage(e);
             setError("Failed to delete: " + message);
         }
     }, [confirm]);

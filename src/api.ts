@@ -4,6 +4,10 @@ import type { Risk, Process } from './types';
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 const SUPABASE_KEY = import.meta.env.VITE_SUPABASE_KEY;
 
+if (!SUPABASE_URL || !SUPABASE_KEY) {
+    throw new Error('Missing VITE_SUPABASE_URL or VITE_SUPABASE_KEY environment variables');
+}
+
 export const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
 export async function fetchProcesses(department: string) {
@@ -53,5 +57,18 @@ export async function saveProcessData(department: string, name: string) {
 
 export async function deleteProcessData(id: string) {
   const { error } = await supabase.from('processes').delete().eq('id', id);
+  if (error) throw error;
+}
+
+export async function deleteProcessWithRisks(processId: string) {
+  const { error: riskErr } = await supabase
+    .from('risks')
+    .delete()
+    .eq('process_id', processId);
+  if (riskErr) throw riskErr;
+  const { error } = await supabase
+    .from('processes')
+    .delete()
+    .eq('id', processId);
   if (error) throw error;
 }
