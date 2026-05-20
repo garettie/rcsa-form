@@ -32,10 +32,12 @@ export default function ProcessModal({
 
     const handleAdd = () => {
         const el = inputRef.current;
-        if (el && el.value) {
-            onAdd(el.value);
-            el.value = '';
-        }
+        if (!el) return;
+        const name = el.value.trim();
+        if (!name) return;
+        if (processes.some(p => p.process_name.toLowerCase() === name.toLowerCase())) return;
+        onAdd(name);
+        el.value = '';
     };
 
     return (

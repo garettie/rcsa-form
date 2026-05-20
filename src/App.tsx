@@ -64,7 +64,7 @@ export default function App() {
         const handler = (e: KeyboardEvent) => {
             if ((e.ctrlKey || e.metaKey) && e.key === 's') {
                 e.preventDefault();
-                if (editingId && !viewOnly) {
+                if (editingId && !viewOnly && !saving) {
                     handleSaveRisk();
                 }
                 return;
