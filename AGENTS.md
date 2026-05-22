@@ -164,7 +164,7 @@ Boris Cherny (creator of Claude Code) keeps his team's file around 100 lines. Un
 - Preview: `npm run preview`
 
 ### Architecture
-- Single-page RCSA form app (no routing, no modules)
+- Single-page RCSA Digital System app (no routing, no modules)
 - `src/components/`: RiskForm, RiskTable, ProcessModal, ContentDrawer, Login
 - `src/hooks/`: useRCSA.ts (primary state management — 399 lines)
 - `src/api.ts`: Supabase client and CRUD functions

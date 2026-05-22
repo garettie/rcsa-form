@@ -1,5 +1,5 @@
 ---
-name: RCSA Form
+name: RCSA Digital System
 description: Risk and Control Self-Assessment for banking operational risk management
 colors:
   primary: "#0f172a"
@@ -108,7 +108,7 @@ components:
     borderWidth: 0 0 1px 0
 ---
 
-# Design System: RCSA Form
+# Design System: RCSA Digital System
 
 ## 1. Overview
 
