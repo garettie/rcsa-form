@@ -233,7 +233,6 @@ export default function RiskForm({
 
     function handleFieldChange(field: keyof FormState, value: unknown) {
         updateForm(field, value);
-        // Clear error for this field and related computed fields
         const fieldId = `f-${field}`;
         setFieldErrors(prev => {
             const copy = { ...prev };

@@ -54,7 +54,6 @@ export default function App() {
     const [tutorialTargetSection, setTutorialTargetSection] = useState<number | null>(null);
     const [currentOpenSection, setCurrentOpenSection] = useState(-1);
 
-    // Clear tutorial section highlight when leaving tutorial mode
     const handleDrawerChange = (drawer: 'tutorial' | 'reference' | 'examples' | null) => {
         if (drawer !== 'tutorial') setTutorialTargetSection(null);
         setActiveDrawer(drawer);
@@ -109,7 +108,6 @@ export default function App() {
         <div className="mx-auto max-w-7xl p-6">
             <div className={`edit-overlay-bg ${editingId ? 'active' : ''}`} onClick={clearForm} />
 
-            {/* Header */}
             <div className="mb-8 flex items-center justify-between">
                 <div>
                     <h1 className="text-2xl font-bold text-slate-800">
@@ -163,7 +161,6 @@ export default function App() {
                 onPageChange={setPage}
             />
 
-            {/* Modals */}
             {showModal && (
                 <div className="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="department-modal-title" onClick={() => { if (department) setShowModal(false); }}>
                     <div className="modal-card" onClick={e => e.stopPropagation()}>

@@ -387,7 +387,6 @@ function TutorialContent({ department, onSectionChange, onOpenRef, currentOpenSe
 
   return (
     <div className="flex flex-1 flex-col overflow-hidden">
-      {/* Step content area */}
       <div className="flex-1 overflow-y-auto p-6 bg-slate-50/30">
         <div className="mb-1 text-[11px] font-bold uppercase tracking-[0.1em] text-blue-500">
           Step {stepNum} of {totalSteps}
@@ -399,7 +398,6 @@ function TutorialContent({ department, onSectionChange, onOpenRef, currentOpenSe
         />
       </div>
 
-      {/* Navigation footer */}
       <div className="border-t border-slate-100 bg-white p-4">
         <div className="mb-3 h-1 rounded-full bg-slate-100 overflow-hidden">
           <div className="h-full bg-blue-500 transition-all duration-500" style={{ width: `${progress}%` }} />
@@ -446,7 +444,6 @@ interface ReferenceContentProps {
 function ReferenceContent({ refTab, setRefTab }: ReferenceContentProps) {
   return (
     <div className="flex flex-1 flex-col overflow-hidden">
-      {/* Tab bar */}
       <div className="flex flex-wrap gap-1 border-b border-slate-100 bg-white px-4 pt-2">
         {REF_TABS.map((name, i) => (
           <button
@@ -463,7 +460,6 @@ function ReferenceContent({ refTab, setRefTab }: ReferenceContentProps) {
         ))}
       </div>
 
-      {/* Tab content */}
       <div className="flex-1 overflow-y-auto p-6 bg-slate-50/30">
         <div>
           {refTab === 0 && renderRefCategories()}
@@ -490,7 +486,6 @@ export default function ContentDrawer({
 
   const isOpen = activeDrawer !== null;
 
-  // Clear tutorial highlights whenever we leave tutorial mode
   useEffect(() => {
     if (activeDrawer !== 'tutorial') {
       clearTutorialHighlights();
@@ -499,17 +494,15 @@ export default function ContentDrawer({
 
   if (!isVisible) return null;
 
-  // Dynamic right offset for the trigger: drawer width + 16px (m-4 right margin) + 16px gap
+  // trigger offset = drawer + margins
   const triggerRight = isOpen
     ? activeDrawer === 'reference'
       ? 'right-[688px]'   // 640 + 32 + 16
       : 'right-[432px]'   // 400 + 32
     : 'right-8';
 
-  // Drawer width class
   const drawerWidth = activeDrawer === 'reference' ? 'w-[640px]' : 'w-[400px]';
 
-  // Header config per mode
   const headerConfig = {
     tutorial: {
       icon: <HelpCircle size={20} />,
@@ -535,17 +528,14 @@ export default function ContentDrawer({
 
   return (
     <>
-      {/* Backdrop */}
       <div
         className={`drawer-backdrop fixed inset-0 z-[1400] bg-slate-900/20 backdrop-blur-[2px] transition-opacity duration-300 ${isOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}
         onClick={() => onDrawerChange(null)}
       />
 
-      {/* Trigger area */}
       <div
         className={`fixed top-1/2 z-[1510] flex items-center gap-3 bouncy-transition ${triggerRight} -translate-y-1/2`}
       >
-        {/* Three nav buttons (visible when closed) */}
         <div
           className={`flex flex-col gap-2 transition-all duration-300 ${isOpen ? 'opacity-0 scale-75 pointer-events-none' : 'opacity-100 scale-100'}`}
         >
@@ -578,7 +568,6 @@ export default function ContentDrawer({
           </button>
         </div>
 
-        {/* Close chevron (visible when open) */}
         <div
           className={`transition-all duration-300 ${isOpen ? 'opacity-100 scale-100' : 'opacity-0 scale-75 pointer-events-none absolute'}`}
         >
@@ -592,11 +581,9 @@ export default function ContentDrawer({
         </div>
       </div>
 
-      {/* Drawer card */}
       <div
         className={`content-drawer fixed right-0 top-0 bottom-0 z-[1500] m-4 flex flex-col bg-white shadow-[0_20px_50px_rgba(0,0,0,0.2)] pointer-events-auto border border-slate-200 rounded-2xl overflow-hidden ${drawerWidth} ${isOpen ? 'open' : ''}`}
       >
-        {/* Header */}
         {header && (
           <div className="flex items-center justify-between border-b border-slate-100 bg-white p-6 flex-shrink-0">
             <div className="flex items-center gap-3">
@@ -618,7 +605,6 @@ export default function ContentDrawer({
           </div>
         )}
 
-        {/* Content */}
         {activeDrawer === 'examples' && (
           <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-slate-50/30">
             {!department ? (
