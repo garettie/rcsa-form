@@ -236,10 +236,15 @@ export function useRCSA() {
         setErrorField(null);
         try {
             const p = processes.find(x => x.id === form.process_id);
+            if (!p) {
+                setError("Process was deleted. Re-select it from the list and try again.");
+                setSaving(false);
+                return false;
+            }
             const dataToSave = { 
                 ...form, 
                 department, 
-                process_name: p?.process_name || "",
+                process_name: p.process_name,
                 action_plan: form.action_plan?.trim() || null,
                 action_plan_deadline: form.action_plan_deadline || null
             };
@@ -256,7 +261,11 @@ export function useRCSA() {
             return true;
         } catch (e: unknown) {
 const message = getErrorMessage(e);
-                setError("Failed to save: " + message);
+                setError(
+                    message.includes("foreign key constraint")
+                        ? "Process was deleted. Re-select it from the list and try again."
+                        : "Failed to save: " + message
+                );
             window.scrollTo({ top: 0, behavior: 'smooth' });
             return false;
         } finally {
